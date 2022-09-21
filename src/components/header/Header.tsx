@@ -4,7 +4,7 @@ export const Header = () => {
       <div className="max-w-screen-xl px-4 py-8 mx-auto sm:px-6 lg:px-8">
         <div className="flex items-center sm:justify-between sm:gap-4">
           <div className="relative hidden sm:block">
-            <label className="sr-only" for="search">
+            <label className="sr-only" htmlFor="search">
               {" "}
               Search{" "}
             </label>
