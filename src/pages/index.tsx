@@ -1,4 +1,5 @@
 import type { NextPage } from "next";
+import Link from "next/link";
 
 const Home: NextPage = () => {
   return (
@@ -9,23 +10,21 @@ const Home: NextPage = () => {
         <div className="max-w-xl text-center sm:text-left">
           <h1 className="text-3xl font-extrabold sm:text-5xl">
             Let us get you on the road -
-            <strong className="p-3 font-extrabold text-rose-700">Reserve a bike today</strong>
+            <strong className="p-3 font-extrabold text-rose-700">Reserve a bike today on BikeRentals</strong>
           </h1>
 
           <div className="flex flex-wrap gap-4 mt-8 text-center">
-            <a
-              href="/login"
-              className="block w-full px-12 py-3 text-sm font-medium text-white rounded shadow bg-rose-600 sm:w-auto active:bg-rose-500 hover:bg-rose-700 focus:outline-none focus:ring"
-            >
-              Get Started 
-            </a>
+            <Link href="/login">
+              <a className="block w-full px-12 py-3 text-sm font-medium text-white rounded shadow bg-rose-600 sm:w-auto active:bg-rose-500 hover:bg-rose-700 focus:outline-none focus:ring">
+                Get Started
+              </a>
+            </Link>
 
-            <a
-              href="#"
-              className="block w-full px-12 py-3 text-sm font-medium bg-white rounded shadow text-rose-600 sm:w-auto hover:text-rose-700 active:text-rose-500 focus:outline-none focus:ring"
-            >
-              Learn More
-            </a>
+            <Link href="/">
+              <a className="block w-full px-12 py-3 text-sm font-medium bg-white rounded shadow text-rose-600 sm:w-auto hover:text-rose-700 active:text-rose-500 focus:outline-none focus:ring">
+                Learn More
+              </a>
+            </Link>
           </div>
         </div>
       </div>
