@@ -1,24 +1,81 @@
 import { AuthLayout } from "components/layout/AuthLayout";
-import { Label, TextInput, Checkbox, Button } from "flowbite-react";
+import { auth } from "firebase-app/init";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { Label, TextInput, Checkbox, Button, Spinner } from "flowbite-react";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { FormEvent, useState } from "react";
+import toast from "react-hot-toast";
 
 const Register = () => {
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const router = useRouter();
+
+  const signUp = (event: FormEvent) => {
+    event.preventDefault();
+    setIsProcessing(true);
+
+    createUserWithEmailAndPassword(auth, email, password)
+      .then(() => {
+        toast.success("Welcome to BikeRentals");
+        router.push("/users/");
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error("Email is in use");
+      })
+      .finally(() => {
+        setIsProcessing(false);
+      });
+  };
+
   return (
     <AuthLayout title="Welcome to BikeRentals">
-      <form action="#" className="grid grid-cols-6 gap-6 mt-8">
+      <form action="#" onSubmit={signUp} className="grid grid-cols-6 gap-6 mt-8">
         <div className="col-span-6">
           <Label htmlFor="fullName" value="Full Name" />
-          <TextInput id="fullName" type="name" placeholder="Edwards" required={true} />
+          <TextInput
+            id="fullName"
+            type="name"
+            placeholder="Edwards"
+            required={true}
+            value={fullName}
+            onChange={(event) => {
+              setFullName(event.currentTarget.value);
+            }}
+          />
         </div>
 
         <div className="col-span-6">
           <Label htmlFor="email" value="Email" />
-          <TextInput id="email" type="email" placeholder="edwards@bikerental.com" required={true} />
+          <TextInput
+            id="email"
+            type="email"
+            placeholder="edwards@bikerental.com"
+            required={true}
+            value={email}
+            onChange={(event) => {
+              setEmail(event.currentTarget.value);
+            }}
+          />
         </div>
 
         <div className="col-span-6">
           <Label htmlFor="password" value="Password" />
-          <TextInput id="password" type="password" placeholder="" required={true} />
+          <TextInput
+            id="password"
+            type="password"
+            placeholder=""
+            required={true}
+            value={password}
+            onChange={(event) => {
+              setPassword(event.currentTarget.value);
+            }}
+          />
         </div>
 
         <div className="col-span-6 space-x-2">
@@ -27,7 +84,14 @@ const Register = () => {
         </div>
 
         <div className="col-span-6 space-y-2">
-          <Button type="submit">Create an account</Button>
+          <Button type="submit">
+            {isProcessing && (
+              <div className="mr-3">
+                <Spinner size="sm" light={true} />
+              </div>
+            )}
+            Create an account
+          </Button>
 
           <p className="mt-4 space-x-1 text-sm text-gray-500 sm:mt-0">
             <span>Already have an account?</span>
