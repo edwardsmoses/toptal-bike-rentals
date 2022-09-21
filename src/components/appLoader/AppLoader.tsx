@@ -12,7 +12,13 @@ export const AppLoader = ({ children }: AppLoaderProps) => {
   const { user, loading } = useAuthUser();
 
   if (typeof window === "undefined" || loading) {
-    return <Spinner size="xl" />;
+    return (
+      <div className="flex w-screen h-screen">
+        <div className="m-auto">
+          <Spinner size="xl" />
+        </div>
+      </div>
+    );
   }
 
   if (!loading && !user) {

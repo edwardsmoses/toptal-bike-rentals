@@ -1,9 +1,8 @@
 import { AppLoader } from "components/appLoader/AppLoader";
 
-export const UserLayout = () => {
-  return (
-    <AppLoader>
-      <div>User</div>
-    </AppLoader>
-  );
+type Props = {
+  children: React.ReactNode;
+};
+export const UserLayout = ({ children }: Props) => {
+  return <AppLoader>{children}</AppLoader>;
 };
