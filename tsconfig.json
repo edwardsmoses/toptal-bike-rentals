@@ -19,6 +19,7 @@
       "components/*": ["./components/*"],
       "pages/*": ["./pages/*"],
       "hooks/*": ["./hooks/*"],
+      "constants/*": ["./constants/*"],
       "firebase-app/*": ["./firebase-app/*"]
     }
   },

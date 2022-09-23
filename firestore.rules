@@ -4,5 +4,19 @@ service cloud.firestore {
     match /{document=**} {
       allow read, write: if false;
     }
+
+    match /bikes/{bikeId} {
+      allow read: if isAuthenticated(); 
+      allow write: if isAuthenticated() && request.auth.uid == incomingData().addedBy 
+    }
+
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function incomingData() { return request.resource.data }
+
+
   }
 }

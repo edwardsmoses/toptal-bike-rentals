@@ -15,6 +15,7 @@
     "firebase": "^9.10.0",
     "flowbite": "^1.5.3",
     "flowbite-react": "^0.1.11",
+    "lodash": "^4.17.21",
     "next": "12.3.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -22,6 +23,7 @@
     "yarn": "^1.22.19"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.185",
     "@types/node": "18.7.18",
     "@types/react": "18.0.20",
     "@types/react-dom": "18.0.6",

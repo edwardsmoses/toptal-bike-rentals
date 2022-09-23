@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export const Sidebar = () => {
   return (
     <div className="flex flex-col justify-between h-screen bg-white border-r w-fit">
@@ -22,7 +24,7 @@ export const Sidebar = () => {
               <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
 
-            <span className="ml-3 text-sm font-medium"> General </span>
+            <span className="ml-3 text-sm font-medium"> Dashboard </span>
           </a>
 
           <details className="group">
@@ -102,28 +104,26 @@ export const Sidebar = () => {
             </nav>
           </details>
 
-          <a
-            href="#"
-            className="flex items-center px-4 py-2 text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-5 h-5 opacity-75"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
-              />
-            </svg>
+          <Link href="/users/bikes/">
+            <a className="flex items-center px-4 py-2 text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-5 h-5 opacity-75"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+                />
+              </svg>
 
-            <span className="ml-3 text-sm font-medium"> Billing </span>
-          </a>
-
+              <span className="ml-3 text-sm font-medium"> Bikes </span>
+            </a>
+          </Link>
           <a
             href="#"
             className="flex items-center px-4 py-2 text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700"
