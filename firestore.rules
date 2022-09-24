@@ -11,11 +11,17 @@ service cloud.firestore {
     }
 
     match /users/{userId} {
-      //allow read of individual users document only if it's the current user or an Manager
+      //allow read of individual users document only if it's the current user or a Manager
       allow get: if isAuthenticated() && (userId == request.auth.uid || currentUserRole() == "manager"); 
       //allow reading all users document only for Managers
       allow list: if isAuthenticated() && currentUserRole() == "manager"; 
       allow write: if isAuthenticated() && (userId == request.auth.uid || currentUserRole() == "manager");
+    }
+
+    match /reservations/{reservationId} {
+      //allow read and write only if it's the user who made the reservation or a Manager
+      allow read: if isAuthenticated() && (existingData().reservedBy == request.auth.uid || currentUserRole() == "manager"); 
+      allow write: if isAuthenticated() && (incomingData().reservedBy == request.auth.uid || currentUserRole() == "manager");
     }
 
 
@@ -24,6 +30,8 @@ service cloud.firestore {
     }
 
     function incomingData() { return request.resource.data }
+    function existingData() { return resource.data }
+
 
     function currentUserRole() { return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role }
 

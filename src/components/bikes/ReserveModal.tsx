@@ -1,4 +1,4 @@
-import { Button, Modal, Rating } from "flowbite-react";
+import { Button, Modal, Rating, Spinner } from "flowbite-react";
 import { map, range } from "lodash";
 import { bikesActions } from "store/features/bikesSlice";
 import { useAppDispatch, useAppSelector } from "store/store";
@@ -6,14 +6,53 @@ import { useAppDispatch, useAppSelector } from "store/store";
 import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css"; // main css file
 import "react-date-range/dist/theme/default.css";
-
+import { useState } from "react";
+import { addDoc, collection, Timestamp } from "firebase/firestore";
+import { firestore } from "firebase-app/init";
+import { RESERVATIONS_COLLECTION } from "constants/collection";
+import { useRouter } from "next/router";
+import toast from "react-hot-toast";
 
 export const ReserveBikeModal = () => {
+  const router = useRouter();
+
   const dispatch = useAppDispatch();
+  const currentUser = useAppSelector((state) => state.currentUser.user);
   const { selectedBike, reservationDate } = useAppSelector((state) => state.bikes.reserveBike);
+
+  const [isAdding, setIsAdding] = useState(false);
 
   const onClose = () => {
     dispatch(bikesActions.resetReserveBikeState());
+  };
+
+  const handleBikeReservation = async () => {
+    try {
+      setIsAdding(true);
+      console.log({
+        bikeId: selectedBike?.id,
+        startDate: reservationDate.startDate,
+        endDate: reservationDate.endDate,
+        reservedBy: currentUser.id,
+        reservedOn: Timestamp.now(),
+      });
+      await addDoc(collection(firestore, RESERVATIONS_COLLECTION), {
+        bikeId: selectedBike?.id,
+        startDate: reservationDate.startDate,
+        endDate: reservationDate.endDate,
+        reservedBy: currentUser.id,
+        reservedOn: Timestamp.now(),
+      });
+      onClose();
+
+      router.push("/users/reservations");
+      toast.success("Awesome! You've have reserved Bike for the selected period");
+    } catch (error) {
+      console.log(error);
+      toast.error("There was an error while reserving the Bike");
+    } finally {
+      setIsAdding(false);
+    }
   };
 
   if (!selectedBike) {
@@ -67,7 +106,7 @@ export const ReserveBikeModal = () => {
                   <div className="mt-3">
                     <div className="flex mt-3">
                       <div>
-                        <legend className="mb-1 text-sm font-medium">Select Dates you're reserving Bike for</legend>
+                        <legend className="mb-1 text-sm font-medium">Select Dates you're reserving the Bike for</legend>
 
                         <DateRange
                           minDate={new Date()}
@@ -85,7 +124,18 @@ export const ReserveBikeModal = () => {
                       </div>
                     </div>
 
-                    <Button size="lg" outline={true} gradientDuoTone="purpleToBlue">
+                    <Button
+                      size="lg"
+                      outline={true}
+                      gradientDuoTone="purpleToBlue"
+                      disabled={isAdding}
+                      onClick={handleBikeReservation}
+                    >
+                      {isAdding && (
+                        <div className="mr-3">
+                          <Spinner size="sm" light={true} />
+                        </div>
+                      )}
                       Reserve
                     </Button>
                   </div>

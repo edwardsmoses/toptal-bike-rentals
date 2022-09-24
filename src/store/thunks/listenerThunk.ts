@@ -28,6 +28,7 @@ const getCurrentUser = (currentUserId: string, dispatch: Function) => {
     dispatch(
       currentUserActions.updateCurrentUser({
         ...(doc.data() as User),
+        id: currentUserId,
       })
     );
   });
@@ -51,7 +52,10 @@ const getAllBikes = (dispatch: Function) => {
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
     const bikes: Bike[] = [];
     querySnapshot.forEach((doc) => {
-      bikes.push(doc.data() as Bike);
+      bikes.push({
+        ...(doc.data() as Bike),
+        id: doc.id,
+      });
     });
     dispatch(bikesActions.setBikes(bikes));
   });

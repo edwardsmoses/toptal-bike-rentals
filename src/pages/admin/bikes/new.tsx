@@ -45,7 +45,7 @@ const NewBike = () => {
   return (
     <UserLayout>
       <div className="p-10">
-        <h3 className="text-2xl font-medium font-sans">Add a new Bike</h3>
+        <h3 className="font-sans text-2xl font-medium">Add a new Bike</h3>
 
         <form action="#" className="grid grid-cols-6 gap-6 mt-8" onSubmit={handleAddNewBike}>
           <div className="col-span-6">
