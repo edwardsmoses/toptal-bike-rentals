@@ -26,17 +26,12 @@ const USER_SIDEBAR_ROUTES: SidebarRouteType[] = [
     routeLabel: "Dashboard",
   },
   {
-    route: "/users/bikes",
-    routeLabel: "Bikes",
-  },
-  {
     route: "/users/reservations",
     routeLabel: "My Reservations",
   },
 ];
 
 export const SIDEBAR_ROUTES: Record<UserRole, SidebarRouteType[]> = {
-  admin: ADMIN_SIDEBAR_ROUTES,
   manager: ADMIN_SIDEBAR_ROUTES,
   user: USER_SIDEBAR_ROUTES,
 };

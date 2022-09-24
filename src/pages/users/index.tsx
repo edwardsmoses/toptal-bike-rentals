@@ -1,20 +1,33 @@
+import { ReserveBikeModal } from "components/bikes/ReserveModal";
 import { UserLayout } from "components/layout/UserLayout";
 import { map } from "lodash";
 import Link from "next/link";
-import { useAppSelector } from "store/store";
+import { bikesActions } from "store/features/bikesSlice";
+import { useAppDispatch, useAppSelector } from "store/store";
 
 const Dashboard = () => {
+  const dispatch = useAppDispatch();
   const allBikes = useAppSelector((state) => state.bikes.allBikes);
 
   return (
-    <UserLayout>
-      <div className="p-10">
-        <h3 className="font-sans text-2xl font-medium">All Bikes</h3>
+    <>
+      <UserLayout>
+        <div className="p-10">
+          <h3 className="font-sans text-2xl font-medium">All Bikes</h3>
 
-        {map(allBikes, (bike) => {
-          return (
-            <div className="grid grid-cols-2 mt-8 lg:grid-cols-4 gap-x-4 gap-y-8" key={bike.id}>
-              <Link href={`/bikes/${bike.id}`}>
+          {map(allBikes, (bike) => {
+            return (
+              <div
+                className="grid grid-cols-2 mt-8 cursor-pointer lg:grid-cols-4 gap-x-4 gap-y-8"
+                key={bike.id}
+                onClick={() => {
+                  dispatch(
+                    bikesActions.setReserveBikeState({
+                      selectedBike: bike,
+                    })
+                  );
+                }}
+              >
                 <a className="relative block overflow-hidden bg-center bg-no-repeat bg-cover rounded-xl bg-[url(https://images.unsplash.com/photo-1552832230-c0197dd311b5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1592&q=80)]">
                   <span className="absolute z-10 inline-flex items-center px-3 py-1 text-xs font-semibold text-white bg-black rounded-full right-4 top-4">
                     {bike.rating}
@@ -36,12 +49,13 @@ const Dashboard = () => {
                     <p className="text-sm">{bike.location}</p>
                   </div>
                 </a>
-              </Link>
-            </div>
-          );
-        })}
-      </div>
-    </UserLayout>
+              </div>
+            );
+          })}
+        </div>
+      </UserLayout>
+      <ReserveBikeModal />
+    </>
   );
 };
 
