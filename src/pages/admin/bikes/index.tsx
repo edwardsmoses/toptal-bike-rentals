@@ -10,7 +10,7 @@ const Bikes = () => {
   return (
     <UserLayout>
       <div className="p-10">
-        <h3 className="text-2xl font-medium font-sans">My Bikes</h3>
+        <h3 className="font-sans text-2xl font-medium">My Bikes</h3>
 
         {isEmpty(allBikes) && (
           <EmptyState

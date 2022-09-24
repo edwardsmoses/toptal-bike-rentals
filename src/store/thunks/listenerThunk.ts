@@ -17,9 +17,7 @@ export const startAppDataLoad = (): AppThunk<void> => {
     listeners.push(getCurrentUser(currentUserId, dispatch));
 
     listeners.push(getAllUsers(dispatch));
-
     listeners.push(getAllBikes(dispatch));
-    listeners.push(getCurrentUserBikes(currentUserId, dispatch));
 
     return listeners;
   };
@@ -50,18 +48,6 @@ const getAllUsers = (dispatch: Function) => {
 
 const getAllBikes = (dispatch: Function) => {
   const q = query(collection(firestore, BIKES_COLLECTION));
-  const unsubscribe = onSnapshot(q, (querySnapshot) => {
-    const bikes: Bike[] = [];
-    querySnapshot.forEach((doc) => {
-      bikes.push(doc.data() as Bike);
-    });
-    dispatch(bikesActions.setBikes(bikes));
-  });
-  return unsubscribe;
-};
-
-const getCurrentUserBikes = (currentUserId: string, dispatch: Function) => {
-  const q = query(collection(firestore, BIKES_COLLECTION), where("addedBy", "==", currentUserId));
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
     const bikes: Bike[] = [];
     querySnapshot.forEach((doc) => {

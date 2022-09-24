@@ -3,12 +3,10 @@ import { Bike } from "models/model";
 
 interface BikeSlice {
   allBikes: Array<Bike>;
-  currentUserBikes: Array<Bike>;
 }
 
 const initialState: BikeSlice = {
   allBikes: [],
-  currentUserBikes: [],
 };
 
 const bikesSlice = createSlice({
@@ -17,9 +15,6 @@ const bikesSlice = createSlice({
   reducers: {
     setBikes(state: BikeSlice, action: PayloadAction<Bike[]>) {
       state.allBikes = action.payload;
-    },
-    setCurrentUserBikes(state: BikeSlice, action: PayloadAction<Bike[]>) {
-      state.currentUserBikes = action.payload;
     },
   },
 });
