@@ -20,6 +20,8 @@
       "pages/*": ["./pages/*"],
       "hooks/*": ["./hooks/*"],
       "constants/*": ["./constants/*"],
+      "store/*": ["./store/*"],
+      "models/*": ["./models/*"],
       "firebase-app/*": ["./firebase-app/*"]
     }
   },

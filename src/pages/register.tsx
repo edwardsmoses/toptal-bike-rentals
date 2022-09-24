@@ -25,7 +25,6 @@ const Register = () => {
         router.push("/users/");
       })
       .catch((error) => {
-        console.log(error);
         toast.error("Email is in use");
       })
       .finally(() => {
