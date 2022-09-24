@@ -7,7 +7,15 @@ service cloud.firestore {
 
     match /bikes/{bikeId} {
       allow read: if isAuthenticated(); 
-      allow write: if isAuthenticated() && request.auth.uid == incomingData().addedBy 
+      allow write: if isAuthenticated() && currentUserRole() == "manager"; 
+    }
+
+    match /users/{userId} {
+      //allow read of individual users document only if it's the current user or an Manager
+      allow get: if isAuthenticated() && (userId == request.auth.uid || currentUserRole() == "manager"); 
+      //allow reading all users document only for Managers
+      allow list: if isAuthenticated() && currentUserRole() == "manager"; 
+      allow write: if isAuthenticated() && (userId == request.auth.uid || currentUserRole() == "manager");
     }
 
 
@@ -16,6 +24,8 @@ service cloud.firestore {
     }
 
     function incomingData() { return request.resource.data }
+
+    function currentUserRole() { return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role }
 
 
   }

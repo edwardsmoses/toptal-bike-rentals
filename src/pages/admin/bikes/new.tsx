@@ -33,7 +33,7 @@ const NewBike = () => {
         isAvailableForRental,
         addedBy: auth.currentUser?.uid || "",
       });
-      router.push("/users/bikes");
+      router.push("/admin/bikes");
       toast.success("Awesome! Your bike has been added successfully.");
     } catch (error) {
       toast.error("There was an error while adding your bike");

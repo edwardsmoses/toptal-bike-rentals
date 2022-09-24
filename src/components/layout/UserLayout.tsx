@@ -6,6 +6,7 @@ type Props = {
   children: React.ReactNode;
 };
 export const UserLayout = ({ children }: Props) => {
+
   return (
     <AppLoader>
       <div className="flex flex-row">

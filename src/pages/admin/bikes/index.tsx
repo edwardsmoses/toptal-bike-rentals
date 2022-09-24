@@ -17,7 +17,7 @@ const Bikes = () => {
             title="There's nothing here"
             message="Bikes you've created would appear here, try adding one"
             linkText="Add a bike"
-            link="/users/bikes/new"
+            link="/admin/bikes/new"
           />
         )}
 

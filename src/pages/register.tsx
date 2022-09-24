@@ -1,6 +1,8 @@
 import { AuthLayout } from "components/layout/AuthLayout";
-import { auth } from "firebase-app/init";
+import { USERS_COLLECTION } from "constants/collection";
+import { auth, firestore } from "firebase-app/init";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { addDoc, collection, Timestamp } from "firebase/firestore";
 import { Label, TextInput, Checkbox, Button, Spinner } from "flowbite-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -20,7 +22,14 @@ const Register = () => {
     setIsProcessing(true);
 
     createUserWithEmailAndPassword(auth, email, password)
-      .then(() => {
+      .then(async () => {
+        await addDoc(collection(firestore, USERS_COLLECTION), {
+          email,
+          fullName,
+          role: "user",
+          addedOn: Timestamp.now(),
+        });
+
         toast.success("Welcome to BikeRentals");
         router.push("/users/");
       })

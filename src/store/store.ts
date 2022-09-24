@@ -3,11 +3,13 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 import { currentUserReducer } from "./features/currentUserSlice";
 import { bikesReducer } from "./features/bikesSlice";
+import { usersReducer } from "./features/usersSlice";
 
 export const store = configureStore({
   reducer: {
     currentUser: currentUserReducer,
     bikes: bikesReducer,
+    allUsers: usersReducer,
   },
 });
 

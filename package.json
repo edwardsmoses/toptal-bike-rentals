@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "export": "next export",
-    "deploy": "yarn run build && yarn run export && firebase deploy"
+    "deploy": "yarn run build && yarn run export && firebase deploy",
+    "deployRules": "firebase deploy --only firestore:rules"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.8.5",

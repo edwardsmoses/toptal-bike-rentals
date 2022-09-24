@@ -11,6 +11,7 @@ const initialState: CurrentUserSlice = {
     email: "",
     fullName: "",
     id: "",
+    role: "user",
   },
 };
 
