@@ -1,7 +1,7 @@
-import { BIKES_COLLECTION, USERS_COLLECTION } from "constants/collection";
+import { BIKES_COLLECTION, RESERVATIONS_COLLECTION, USERS_COLLECTION } from "constants/collection";
 import { auth, firestore } from "firebase-app/init";
 import { collection, doc, onSnapshot, query, where } from "firebase/firestore";
-import { Bike, User } from "models/model";
+import { Bike, BikeReservation, User } from "models/model";
 import { bikesActions } from "store/features/bikesSlice";
 import { currentUserActions } from "store/features/currentUserSlice";
 import { usersActions } from "store/features/usersSlice";
@@ -18,6 +18,7 @@ export const startAppDataLoad = (): AppThunk<void> => {
 
     listeners.push(getAllUsers(dispatch));
     listeners.push(getAllBikes(dispatch));
+    listeners.push(getCurrentUserReservations(currentUserId, dispatch));
 
     return listeners;
   };
@@ -31,6 +32,21 @@ const getCurrentUser = (currentUserId: string, dispatch: Function) => {
         id: currentUserId,
       })
     );
+  });
+  return unsubscribe;
+};
+
+const getCurrentUserReservations = (currentUserId: string, dispatch: Function) => {
+  const q = query(collection(firestore, RESERVATIONS_COLLECTION), where("reservedBy", "==", currentUserId));
+  const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const reservations: BikeReservation[] = [];
+    querySnapshot.forEach((doc) => {
+      reservations.push({
+        ...(doc.data() as BikeReservation),
+        id: doc.id,
+      });
+    });
+    dispatch(bikesActions.setReservations(reservations));
   });
   return unsubscribe;
 };

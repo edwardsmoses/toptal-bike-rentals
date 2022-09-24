@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore";
+
 export type UserRole = "manager" | "user";
 
 export interface User {
@@ -15,4 +17,13 @@ export interface Bike {
   rating: number;
   isAvailableForRental: boolean;
   addedBy: string;
+}
+
+export interface BikeReservation {
+  id: string;
+  bikeId: string;
+  startDate: Timestamp;
+  endDate: Timestamp;
+  reservedBy: string;
+  reservedOn: Timestamp;
 }

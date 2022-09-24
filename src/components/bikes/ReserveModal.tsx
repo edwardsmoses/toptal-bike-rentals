@@ -29,13 +29,7 @@ export const ReserveBikeModal = () => {
   const handleBikeReservation = async () => {
     try {
       setIsAdding(true);
-      console.log({
-        bikeId: selectedBike?.id,
-        startDate: reservationDate.startDate,
-        endDate: reservationDate.endDate,
-        reservedBy: currentUser.id,
-        reservedOn: Timestamp.now(),
-      });
+     
       await addDoc(collection(firestore, RESERVATIONS_COLLECTION), {
         bikeId: selectedBike?.id,
         startDate: reservationDate.startDate,
@@ -84,7 +78,7 @@ export const ReserveBikeModal = () => {
 
                       <div className="flex mt-2 -ml-0.5">
                         <Rating>
-                          {map(range(1, selectedBike.rating + 1), (star) => {
+                          {map(range(1, selectedBike.rating + 1), () => {
                             return <Rating.Star />;
                           })}
                         </Rating>
