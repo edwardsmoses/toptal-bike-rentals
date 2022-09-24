@@ -2,7 +2,7 @@ import { AuthLayout } from "components/layout/AuthLayout";
 import { USERS_COLLECTION } from "constants/collection";
 import { auth, firestore } from "firebase-app/init";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { addDoc, collection, Timestamp } from "firebase/firestore";
+import { doc, setDoc, Timestamp } from "firebase/firestore";
 import { Label, TextInput, Checkbox, Button, Spinner } from "flowbite-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -22,8 +22,8 @@ const Register = () => {
     setIsProcessing(true);
 
     createUserWithEmailAndPassword(auth, email, password)
-      .then(async () => {
-        await addDoc(collection(firestore, USERS_COLLECTION), {
+      .then(async (response) => {
+        await setDoc(doc(firestore, USERS_COLLECTION, response.user.uid), {
           email,
           fullName,
           role: "user",
@@ -92,7 +92,7 @@ const Register = () => {
         </div>
 
         <div className="col-span-6 space-y-2">
-          <Button type="submit">
+          <Button type="submit" disabled={isProcessing}>
             {isProcessing && (
               <div className="mr-3">
                 <Spinner size="sm" light={true} />
