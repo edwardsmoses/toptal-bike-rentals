@@ -1,13 +1,31 @@
 import { UserLayout } from "components/layout/UserLayout";
+import { RESERVATIONS_COLLECTION } from "constants/collection";
 import { formatDateInRelativeFormat } from "constants/date";
 import { format, formatRelative } from "date-fns";
+import { firestore } from "firebase-app/init";
+import { deleteDoc, doc } from "firebase/firestore";
 import { Button } from "flowbite-react";
 import { map } from "lodash";
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
+import { toast } from "react-hot-toast";
+
 import { selectCurrentUserReservations } from "store/features/bikesSlice";
 import { useAppSelector } from "store/store";
 
 const Reservations = () => {
   const reservations = useAppSelector(selectCurrentUserReservations);
+
+  const cancelReservation = async (reservationId: string) => {
+    try {
+      console.log(reservationId);
+      await deleteDoc(doc(firestore, RESERVATIONS_COLLECTION, reservationId));
+      toast.success("You've cancelled your reservation");
+    } catch (error) {
+      console.log(error);
+      toast.error("There was an error cancelling your reservation");
+    }
+  };
 
   return (
     <UserLayout>
@@ -24,7 +42,28 @@ const Reservations = () => {
                 />
 
                 <div className="absolute top-3 right-1">
-                  <Button type="button" size="xs">
+                  <Button
+                    type="button"
+                    size="xs"
+                    onClick={() => {
+                      confirmAlert({
+                        title: "Cancel Reservation",
+                        message: "Are you sure you want to cancel your Reservation? You can't undo this action.",
+                        buttons: [
+                          {
+                            label: "Yes, Proceed",
+                            onClick: () => {
+                              cancelReservation(reservation.id);
+                            },
+                          },
+                          {
+                            label: "No",
+                            onClick: () => {},
+                          },
+                        ],
+                      });
+                    }}
+                  >
                     Cancel Reservation
                   </Button>
                 </div>
@@ -34,7 +73,7 @@ const Reservations = () => {
                     {reservation.bike.location}, {reservation.bike.model}
                   </h5>
                   <span className="text-sm">
-                    Reservation date: 
+                    Reservation date:
                     <span className="text-xs font-medium">
                       {formatDateInRelativeFormat(reservation.startDate)} -{" "}
                       {formatDateInRelativeFormat(reservation.endDate || reservation.startDate)}

@@ -21,7 +21,8 @@ service cloud.firestore {
     match /reservations/{reservationId} {
       //allow read and write only if it's the user who made the reservation or a Manager
       allow read: if isAuthenticated() && (existingData().reservedBy == request.auth.uid || currentUserRole() == "manager"); 
-      allow write: if isAuthenticated() && (incomingData().reservedBy == request.auth.uid || currentUserRole() == "manager");
+      allow create: if isAuthenticated() && (incomingData().reservedBy == request.auth.uid || currentUserRole() == "manager");
+      allow write: if isAuthenticated() && (existingData().reservedBy == request.auth.uid || currentUserRole() == "manager");
     }
 
 
