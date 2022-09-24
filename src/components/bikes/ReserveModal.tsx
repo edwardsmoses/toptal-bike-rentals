@@ -95,8 +95,14 @@ export const ReserveBikeModal = () => {
 
                       <div className="flow-root">
                         <div className="flex flex-wrap -m-0.5">
-                          <span className="inline-block px-3 py-1 text-xs font-medium border rounded-full group">
-                            {selectedBike.color}
+                          <span className="flex px-3 py-1 space-x-1 text-xs font-medium border rounded-full group">
+                            <span
+                              className="block w-4 h-4 rounded-full"
+                              style={{
+                                backgroundColor: selectedBike.color,
+                              }}
+                            />
+                            <span>{selectedBike.color}</span>
                           </span>
                         </div>
                       </div>
