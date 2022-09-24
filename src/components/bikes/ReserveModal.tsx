@@ -3,9 +3,14 @@ import { map, range } from "lodash";
 import { bikesActions } from "store/features/bikesSlice";
 import { useAppDispatch, useAppSelector } from "store/store";
 
+import { DateRange } from "react-date-range";
+import "react-date-range/dist/styles.css"; // main css file
+import "react-date-range/dist/theme/default.css";
+
+
 export const ReserveBikeModal = () => {
   const dispatch = useAppDispatch();
-  const { selectedBike } = useAppSelector((state) => state.bikes.reserveBike);
+  const { selectedBike, reservationDate } = useAppSelector((state) => state.bikes.reserveBike);
 
   const onClose = () => {
     dispatch(bikesActions.resetReserveBikeState());
@@ -22,7 +27,7 @@ export const ReserveBikeModal = () => {
       <Modal.Body>
         <div className="space-y-6">
           <section>
-            <div className="relative max-w-screen-xl px-4 py-8 mx-auto">
+            <div className="relative max-w-screen-xl px-4 mx-auto">
               <div className="grid items-start grid-cols-1 gap-8 md:grid-cols-2">
                 <div className="grid grid-cols-1 gap-4">
                   <img
@@ -33,7 +38,7 @@ export const ReserveBikeModal = () => {
                 </div>
 
                 <div className="sticky top-0">
-                  <div className="flex justify-between mt-8">
+                  <div className="flex justify-between">
                     <div className="max-w-[35ch]">
                       <h1 className="text-2xl font-bold">{selectedBike.model}</h1>
                       <p className="mt-0.5 text-sm">{selectedBike.location}</p>
@@ -46,41 +51,6 @@ export const ReserveBikeModal = () => {
                         </Rating>
                       </div>
                     </div>
-                  </div>
-
-                  <details className="relative mt-4 group">
-                    <summary className="block">
-                      <div>
-                        <div className="prose max-w-none group-open:hidden">
-                          <p>
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa veniam dicta beatae eos ex
-                            error culpa delectus rem tenetur, architecto quam nesciunt, dolor veritatis nisi minus
-                            inventore, rerum at recusandae?
-                          </p>
-                        </div>
-
-                        <span className="mt-4 text-sm font-medium underline cursor-pointer group-open:absolute group-open:bottom-0 group-open:left-0 group-open:mt-0">
-                          Read More
-                        </span>
-                      </div>
-                    </summary>
-
-                    <div className="pb-6 prose max-w-none">
-                      <p>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa veniam dicta beatae eos ex error
-                        culpa delectus rem tenetur, architecto quam nesciunt, dolor veritatis nisi minus inventore,
-                        rerum at recusandae?
-                      </p>
-
-                      <p>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat nam sapiente nobis ea veritatis
-                        error consequatur nisi exercitationem iure laudantium culpa, animi temporibus non! Maxime et
-                        quisquam amet. A, deserunt!
-                      </p>
-                    </div>
-                  </details>
-
-                  <div className="mt-8">
                     <fieldset>
                       <legend className="mb-1 text-sm font-medium">Color</legend>
 
@@ -92,16 +62,25 @@ export const ReserveBikeModal = () => {
                         </div>
                       </div>
                     </fieldset>
+                  </div>
 
-                    <div className="flex mt-8">
+                  <div className="mt-3">
+                    <div className="flex mt-3">
                       <div>
-                        <legend className="mb-1 text-sm font-medium">Select Reservation Date</legend>
-                        <input
-                          type="date"
-                          id="quantity"
-                          min="1"
-                          value="1"
-                          className="w-12 py-3 text-xs text-center border-gray-200 rounded [-moz-appearance:_textfield] [&::-webkit-outer-spin-button]:m-0 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        <legend className="mb-1 text-sm font-medium">Select Dates you're reserving Bike for</legend>
+
+                        <DateRange
+                          minDate={new Date()}
+                          moveRangeOnFirstSelection={false}
+                          editableDateInputs={true}
+                          onChange={(item: any) => {
+                            dispatch(
+                              bikesActions.setReserveBikeState({
+                                reservationDate: item.selection,
+                              })
+                            );
+                          }}
+                          ranges={[reservationDate]}
                         />
                       </div>
                     </div>

@@ -1,9 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { addDays } from "date-fns";
 import { Bike } from "models/model";
 
 type ReserveBikeState = {
   selectedBike?: Bike;
-  reservationDate?: number;
+  reservationDate?: any;
 };
 
 interface BikeSlice {
@@ -13,7 +14,13 @@ interface BikeSlice {
 
 const initialState: BikeSlice = {
   allBikes: [],
-  reserveBike: {},
+  reserveBike: {
+    reservationDate: {
+      startDate: new Date(),
+      endDate: null,
+      key: "selection",
+    },
+  },
 };
 
 const bikesSlice = createSlice({

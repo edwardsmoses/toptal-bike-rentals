@@ -1,7 +1,6 @@
 import { ReserveBikeModal } from "components/bikes/ReserveModal";
 import { UserLayout } from "components/layout/UserLayout";
 import { map } from "lodash";
-import Link from "next/link";
 import { bikesActions } from "store/features/bikesSlice";
 import { useAppDispatch, useAppSelector } from "store/store";
 
