@@ -15,7 +15,7 @@ const Bikes = () => {
         {isEmpty(allBikes) && (
           <EmptyState
             title="There's nothing here"
-            message="Bikes you've created would appear here, try adding one"
+            message="Bikes created would appear here, try adding one"
             linkText="Add a bike"
             link="/admin/bikes/new"
           />
