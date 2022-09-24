@@ -51,7 +51,13 @@ const Reservations = () => {
                   className="object-contain w-full"
                 />
 
-                <div className="absolute top-3 right-1">
+                <div className="absolute flex justify-between top-3 left-1 right-1">
+                  <p className="flex flex-col px-4 py-2 text-xs bg-gray-100 rounded-sm">
+                    <span>Reservation Date:</span>
+                    <span>{formatDateInRelativeFormat(reservation.startDate)} -</span>
+                    <span>{formatDateInRelativeFormat(reservation.endDate || reservation.startDate)} -</span>
+                  </p>
+
                   <Button
                     type="button"
                     size="xs"
@@ -82,13 +88,7 @@ const Reservations = () => {
                   <h5 className="text-lg font-bold">
                     {reservation.bike.location}, {reservation.bike.model}
                   </h5>
-                  <span className="text-sm">
-                    Reservation date:
-                    <span className="text-xs font-medium">
-                      {formatDateInRelativeFormat(reservation.startDate)} -{" "}
-                      {formatDateInRelativeFormat(reservation.endDate || reservation.startDate)}
-                    </span>
-                  </span>
+                  <span className="text-sm"></span>
 
                   <p className="text-xs text-gray-700">
                     reserved on: {formatDateInRelativeFormat(reservation.reservedOn)}
