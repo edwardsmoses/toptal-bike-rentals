@@ -8,7 +8,7 @@ export const Sidebar = () => {
   const currentUser = useAppSelector((state) => state.currentUser.user);
   const router = useRouter();
 
-  const sidebarRoutes = SIDEBAR_ROUTES[currentUser.role];
+  const sidebarRoutes = SIDEBAR_ROUTES[currentUser.role!];
 
   const currentRoute = `/${router.pathname.split("/")[1]}/${router.pathname.split("/")[2] || ""}`;
 

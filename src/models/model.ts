@@ -6,8 +6,8 @@ export interface User {
   id: string;
   fullName: string;
   email: string;
-  role: UserRole;
-  addedOn: Timestamp;
+  role?: UserRole;
+  addedOn?: Timestamp;
   addedBy?: string;
   updatedOn?: Timestamp;
   updatedBy?: string;

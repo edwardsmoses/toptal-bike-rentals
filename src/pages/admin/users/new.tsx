@@ -32,7 +32,7 @@ const NewUser = () => {
       setEditUserId(currentUser.id);
       setEmail(currentUser.email);
       setFullName(currentUser.fullName);
-      setRole(currentUser.role);
+      setRole(currentUser.role!);
     }
   }, [id]);
 
