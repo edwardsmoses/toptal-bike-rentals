@@ -8,8 +8,9 @@ service cloud.firestore {
     match /bikes/{bikeId} {
       allow read: if isAuthenticated(); 
       allow write: if isAuthenticated() && currentUserRole() == "manager"; 
-      //allow users to only update the ratings field...
+      //allow users to only update the ratings and reservations field...
       allow update: if isAuthenticated() && currentUserRole() == "user" && incomingData().diff(existingData()).affectedKeys().hasOnly(['ratings'])
+      allow update: if isAuthenticated() && currentUserRole() == "user" && incomingData().diff(existingData()).affectedKeys().hasOnly(['reservationDates'])
     }
 
     match /users/{userId} {

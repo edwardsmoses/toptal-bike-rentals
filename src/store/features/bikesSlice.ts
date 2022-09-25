@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { calculateBikeRating } from "constants/ratings";
-import { filter, find, includes, isEmpty, lowerCase, map, uniq } from "lodash";
+import { isWithinInterval } from "date-fns";
+import { filter, find, includes, isEmpty, lowerCase, map, some, uniq, values } from "lodash";
 import { User, Bike, BikeReservation } from "models/model";
 import { RootState } from "store/store";
 
@@ -125,6 +126,33 @@ export const selectBikesForRental = (state: RootState) => {
     bikesAvailableForRental = filter(bikesAvailableForRental, (bike) =>
       includes(rating, Math.round(calculateBikeRating(bike.ratings)))
     );
+  }
+
+  if (startDate && endDate) {
+    bikesAvailableForRental = filter(bikesAvailableForRental, (bike) => {
+      //check if the start date lies within any reserved dates for the bike
+      //if it does, it isn't available
+      const isStartDateUnavailable = some(values(bike.reservationDates), (reserved) =>
+        isWithinInterval(new Date(startDate), {
+          start: new Date(reserved[0].seconds * 1000),
+          end: new Date(reserved[1].seconds * 1000),
+        })
+      );
+
+      //check if the end date lies within any reserved dates for the bike..
+      //if it does, it isn't available
+      const isEndDateUnavailable = some(values(bike.reservationDates), (reserved) =>
+        isWithinInterval(new Date(endDate), {
+          start: new Date(reserved[0].seconds * 1000),
+          end: new Date(reserved[1].seconds * 1000),
+        })
+      );
+
+      console.log(!isStartDateUnavailable && !isEndDateUnavailable);
+
+      //if start date and end date is available, yes, the bike is available
+      return !isStartDateUnavailable && !isEndDateUnavailable;
+    });
   }
 
   return bikesAvailableForRental;

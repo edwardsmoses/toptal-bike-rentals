@@ -20,6 +20,7 @@ export interface Bike {
   location: string;
   ratings: Record<string, number>;
   isAvailableForRental: boolean;
+  reservationDates?: Record<string, [Timestamp, Timestamp]>;
   addedOn: string;
   addedBy: string;
   updatedOn?: string;

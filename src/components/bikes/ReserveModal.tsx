@@ -7,9 +7,9 @@ import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css"; // main css file
 import "react-date-range/dist/theme/default.css";
 import { useState } from "react";
-import { addDoc, collection, Timestamp } from "firebase/firestore";
+import { addDoc, collection, doc, runTransaction, Timestamp } from "firebase/firestore";
 import { firestore } from "firebase-app/init";
-import { RESERVATIONS_COLLECTION } from "constants/collection";
+import { BIKES_COLLECTION, RESERVATIONS_COLLECTION } from "constants/collection";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 import { calculateBikeRating } from "constants/ratings";
@@ -31,13 +31,26 @@ export const ReserveBikeModal = () => {
     try {
       setIsAdding(true);
 
-      await addDoc(collection(firestore, RESERVATIONS_COLLECTION), {
-        bikeId: selectedBike?.id,
-        startDate: reservationDate.startDate,
-        endDate: reservationDate.endDate,
-        reservedBy: currentUser.id,
-        reservedOn: Timestamp.now(),
+      const bikeRef = doc(firestore, BIKES_COLLECTION, selectedBike?.id || "");
+      const reservationRef = doc(collection(firestore, RESERVATIONS_COLLECTION));
+
+      await runTransaction(firestore, async (transaction) => {
+
+        //update the reservation dates on the 
+        transaction.update(bikeRef, {
+          [`reservationDates.${reservationRef.id}`]: [reservationDate.startDate, reservationDate.endDate],
+        });
+
+        //add the reservation.. 
+        transaction.set(reservationRef, {
+          bikeId: selectedBike?.id,
+          startDate: reservationDate.startDate,
+          endDate: reservationDate.endDate,
+          reservedBy: currentUser.id,
+          reservedOn: Timestamp.now(),
+        });
       });
+
       onClose();
 
       router.push("/users/reservations");

@@ -14,12 +14,12 @@ const Dashboard = () => {
     <>
       <UserLayout>
         <div className="p-10">
-          <h3 className="font-sans text-2xl font-medium">All Bikes</h3>
+          <h3 className="font-sans text-2xl font-medium">Available Bikes</h3>
 
           {isEmpty(allBikes) && (
             <div className="flex w-full">
               <div className="m-auto">
-                <EmptyState title="No Bikes found" message="There are no bikes found with the current filter." />
+                <EmptyState title="No Bikes found" message="There are no available bikes found with the current filter set." />
               </div>
             </div>
           )}

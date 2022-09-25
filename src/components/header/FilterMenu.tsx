@@ -13,12 +13,14 @@ export const FilterMenu = () => {
 
   const buttonRef = useRef<HTMLSpanElement | null>(null);
 
+  const isFilterActive = !!color || !!model || !!location || !isEmpty(rating) || (!!endDate && !!startDate);
+
   return (
     <Dropdown
       label={
         <span className={"relative"} ref={buttonRef}>
           Filter Bikes
-          {(!!color || !!model || !!location || !isEmpty(rating) || !!endDate || !!startDate) && (
+          {isFilterActive && (
             <span className="absolute top-0 block w-2 h-2 bg-blue-600 rounded-full -right-8 animate-pulse"></span>
           )}
         </span>

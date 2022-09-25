@@ -101,7 +101,8 @@ const Reservations = () => {
 
         //remove the ratings from the Bike collection
         transaction.update(bikeRef, {
-          [`ratings.${rateReservationId}`]: deleteField(),
+          [`ratings.${reservationId}`]: deleteField(),
+          [`reservationDates.${reservationId}`]: deleteField(),
         });
       });
 
