@@ -1,5 +1,6 @@
 import { ReserveBikeModal } from "components/bikes/ReserveModal";
 import { UserLayout } from "components/layout/UserLayout";
+import { calculateBikeRating } from "constants/ratings";
 import { map } from "lodash";
 import { bikesActions } from "store/features/bikesSlice";
 import { useAppDispatch, useAppSelector } from "store/store";
@@ -29,7 +30,7 @@ const Dashboard = () => {
               >
                 <a className="relative block overflow-hidden bg-center bg-no-repeat bg-cover rounded-xl bg-[url(https://images.unsplash.com/photo-1552832230-c0197dd311b5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1592&q=80)]">
                   <span className="absolute z-10 inline-flex items-center px-3 py-1 text-xs font-semibold text-white bg-black rounded-full right-4 top-4">
-                    {bike.rating}
+                    {calculateBikeRating(bike.ratings)}
 
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

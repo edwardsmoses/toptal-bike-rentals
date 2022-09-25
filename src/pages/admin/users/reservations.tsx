@@ -46,6 +46,7 @@ const BikeReservations = () => {
                   <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800" key={reservation.id}>
                     <Table.Cell className="font-medium text-gray-900 whitespace-nowrap dark:text-white">
                       {reservation.bike.model} {reservation.bike.location} <small>{reservation.bike.color}</small>
+                      <small> {reservation.rating ? `(rated ${reservation.rating} stars)` : "-"}</small>
                     </Table.Cell>
                     <Table.Cell>
                       {formatDateInRelativeFormat(reservation.startDate)} -{" "}

@@ -1,6 +1,7 @@
 import { EmptyState } from "components/empty/EmptyState";
 import { UserLayout } from "components/layout/UserLayout";
 import { BIKES_COLLECTION } from "constants/collection";
+import { calculateBikeRating } from "constants/ratings";
 import { firestore } from "firebase-app/init";
 import { deleteDoc, doc } from "firebase/firestore";
 import { Button, Card, Dropdown, Rating } from "flowbite-react";
@@ -35,7 +36,9 @@ const BikeCard = ({ bike }: BikeCardProp) => {
             {bike.location}
             <Rating>
               <Rating.Star />
-              <p className="ml-2 text-sm font-bold text-gray-900 dark:text-white">{bike.rating || 0}</p>
+              <p className="ml-2 text-sm font-bold text-gray-900 dark:text-white">
+                {calculateBikeRating(bike.ratings)}
+              </p>
               <span className="mx-1.5 h-1 w-1 rounded-full bg-gray-500 dark:bg-gray-400" />
               <Link href={`/admin/bikes/reservations?id=${bike.id}`}>
                 <a className="text-sm font-medium text-gray-900 underline hover:no-underline dark:text-white">

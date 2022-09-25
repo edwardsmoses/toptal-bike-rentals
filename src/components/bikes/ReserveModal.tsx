@@ -12,6 +12,7 @@ import { firestore } from "firebase-app/init";
 import { RESERVATIONS_COLLECTION } from "constants/collection";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
+import { calculateBikeRating } from "constants/ratings";
 
 export const ReserveBikeModal = () => {
   const router = useRouter();
@@ -29,7 +30,7 @@ export const ReserveBikeModal = () => {
   const handleBikeReservation = async () => {
     try {
       setIsAdding(true);
-     
+
       await addDoc(collection(firestore, RESERVATIONS_COLLECTION), {
         bikeId: selectedBike?.id,
         startDate: reservationDate.startDate,
@@ -78,9 +79,12 @@ export const ReserveBikeModal = () => {
 
                       <div className="flex mt-2 -ml-0.5">
                         <Rating>
-                          {map(range(1, selectedBike.rating + 1), () => {
+                          {map(range(0, calculateBikeRating(selectedBike.ratings)), () => {
                             return <Rating.Star />;
                           })}
+                          <p className="ml-2 text-sm font-bold text-gray-900 dark:text-white">
+                            {calculateBikeRating(selectedBike.ratings)}
+                          </p>
                         </Rating>
                       </div>
                     </div>

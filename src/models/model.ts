@@ -14,7 +14,7 @@ export interface Bike {
   model: string;
   color: string;
   location: string;
-  rating: number;
+  ratings: Record<string, number>;
   isAvailableForRental: boolean;
   addedOn: string;
   addedBy: string;

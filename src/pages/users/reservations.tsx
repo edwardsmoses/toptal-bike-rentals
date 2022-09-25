@@ -1,11 +1,11 @@
 import { EmptyState } from "components/empty/EmptyState";
 import { UserLayout } from "components/layout/UserLayout";
-import { RESERVATIONS_COLLECTION } from "constants/collection";
+import { BIKES_COLLECTION, RESERVATIONS_COLLECTION } from "constants/collection";
 import { formatDateInRelativeFormat } from "constants/date";
 import { firestore } from "firebase-app/init";
-import { deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { deleteDoc, deleteField, doc, FieldValue, runTransaction, updateDoc } from "firebase/firestore";
 import { Button, Modal, Rating, Spinner } from "flowbite-react";
-import { isEmpty, map, range } from "lodash";
+import { find, isEmpty, map, range } from "lodash";
 import { useState } from "react";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
@@ -91,6 +91,20 @@ const Reservations = () => {
   const cancelReservation = async (reservationId: string) => {
     try {
       await deleteDoc(doc(firestore, RESERVATIONS_COLLECTION, reservationId));
+
+      const reservationRef = doc(firestore, RESERVATIONS_COLLECTION, reservationId);
+      const bikeRef = doc(firestore, BIKES_COLLECTION, find(reservations, (r) => r.id === reservationId)?.bikeId || "");
+
+      await runTransaction(firestore, async (transaction) => {
+        //delete the reservation...
+        transaction.delete(reservationRef);
+
+        //remove the ratings from the Bike collection
+        transaction.update(bikeRef, {
+          [`ratings.${rateReservationId}`]: deleteField(),
+        });
+      });
+
       toast.success("You've cancelled your reservation");
     } catch (error) {
       console.log(error);
@@ -101,7 +115,23 @@ const Reservations = () => {
   const handleRateReservation = async () => {
     try {
       setIsProcessing(true);
+
       const reservationRef = doc(firestore, RESERVATIONS_COLLECTION, rateReservationId);
+      const bikeRef = doc(
+        firestore,
+        BIKES_COLLECTION,
+        find(reservations, (r) => r.id === rateReservationId)?.bikeId || ""
+      );
+
+      await runTransaction(firestore, async (transaction) => {
+        transaction.update(reservationRef, { rating: bikeRating });
+
+        //update the ratings on the Bike collection
+        transaction.update(bikeRef, {
+          [`ratings.${rateReservationId}`]: bikeRating,
+        });
+      });
+
       await updateDoc(reservationRef, {
         rating: bikeRating,
       });
