@@ -1,7 +1,7 @@
 import { BIKES_COLLECTION, RESERVATIONS_COLLECTION, USERS_COLLECTION } from "constants/collection";
 import { auth, firestore } from "firebase-app/init";
 import { collection, doc, getDoc, onSnapshot, query, where } from "firebase/firestore";
-import { Bike, BikeReservation, User } from "models/model";
+import { Bike, BikeReservation, User, UserRole } from "models/model";
 import { bikesActions } from "store/features/bikesSlice";
 import { currentUserActions } from "store/features/currentUserSlice";
 import { usersActions } from "store/features/usersSlice";
@@ -9,7 +9,7 @@ import { AppThunk } from "store/store";
 
 export const startAppDataLoad = (
   onLoadStartCallback: () => void,
-  onLoadUserCompleteCallback: () => void
+  onLoadUserCompleteCallback: (userRole: UserRole) => void
 ): AppThunk<void> => {
   return async (dispatch) => {
     const listeners = [];
@@ -19,7 +19,7 @@ export const startAppDataLoad = (
     onLoadStartCallback();
 
     const currentUser = await getCurrentUser(currentUserId, dispatch);
-    onLoadUserCompleteCallback();
+    onLoadUserCompleteCallback(currentUser.role!);
 
     if (currentUser.role === "manager") {
       listeners.push(getAllUsers(dispatch));
