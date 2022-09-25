@@ -1,5 +1,5 @@
 import { auth } from "firebase-app/init";
-import { Dropdown } from "flowbite-react";
+import { Avatar, Dropdown } from "flowbite-react";
 import { first, words } from "lodash";
 import { currentUserActions } from "store/features/currentUserSlice";
 import { useAppDispatch, useAppSelector } from "store/store";
@@ -24,11 +24,7 @@ export const Header = () => {
               placement="bottom-end"
               label={
                 <div className="flex items-center transition rounded-lg group shrink-0">
-                  <img
-                    alt="Man"
-                    src="https://images.unsplash.com/photo-1600486913747-55e5470d6f40?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
-                    className="object-cover w-10 h-10 rounded-full"
-                  />
+                  <Avatar rounded={true} />
 
                   <p className="hidden ml-2 text-xs text-left sm:block">
                     <strong className="block font-medium">{currentUser.fullName}</strong>
