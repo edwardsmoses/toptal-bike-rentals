@@ -1,5 +1,6 @@
 import { UserLayout } from "components/layout/UserLayout";
 import { USERS_COLLECTION } from "constants/collection";
+import { formatDateInRelativeFormat } from "constants/date";
 import { firestore } from "firebase-app/init";
 import { deleteDoc, doc } from "firebase/firestore";
 import { Button, Dropdown, Table } from "flowbite-react";
@@ -13,6 +14,7 @@ import "react-confirm-alert/src/react-confirm-alert.css";
 
 import toast from "react-hot-toast";
 import { selectUserReservations } from "store/features/bikesSlice";
+import { selectUser } from "store/features/usersSlice";
 import { useAppSelector } from "store/store";
 
 type UserRowProps = {
@@ -21,6 +23,10 @@ type UserRowProps = {
 
 const UserRow = ({ user }: UserRowProps) => {
   const currentUser = useAppSelector((state) => state.currentUser.user);
+
+  const userWhoAddedUser = useAppSelector((state) => selectUser(state, user.addedBy || ""));
+  const userWhoUpdatedUser = useAppSelector((state) => selectUser(state, user.updatedBy || ""));
+
   const reservations = useAppSelector((state) => selectUserReservations(state, user.id));
   const router = useRouter();
 
@@ -29,6 +35,25 @@ const UserRow = ({ user }: UserRowProps) => {
       <Table.Cell className="font-medium text-gray-900 whitespace-nowrap dark:text-white">{user.fullName}</Table.Cell>
       <Table.Cell>{user.email}</Table.Cell>
       <Table.Cell>{capitalize(user.role)}</Table.Cell>
+      <Table.Cell>
+        <span>
+          {!!user.addedOn && (
+            <small className="flex flex-col">
+              <span>
+                created {formatDateInRelativeFormat(user.addedOn, false)}{" "}
+                {userWhoAddedUser ? `by ${userWhoAddedUser.fullName}` : ""}{" "}
+              </span>
+              {!!user.updatedOn && (
+                <small>
+                  updated {formatDateInRelativeFormat(user.updatedOn, false)}{" "}
+                  {userWhoUpdatedUser ? `by ${userWhoUpdatedUser.fullName}` : ""}{" "}
+                </small>
+              )}
+            </small>
+          )}
+        </span>
+      </Table.Cell>
+
       <Table.Cell>
         {user.role === "user" ? (
           <Link href={`/admin/users/reservations?id=${user.id}`}>
@@ -41,7 +66,7 @@ const UserRow = ({ user }: UserRowProps) => {
         )}
       </Table.Cell>
       <Table.Cell>
-        <Dropdown label="Actions" size="sm">
+        <Dropdown label="Actions" size="sm" placement="left">
           <Dropdown.Item
             onClick={() => {
               router.push(`/admin/users/reservations?id=${user.id}`);
@@ -110,9 +135,10 @@ const AllUsers = () => {
             <Table.HeadCell>Name</Table.HeadCell>
             <Table.HeadCell>Email</Table.HeadCell>
             <Table.HeadCell>Role</Table.HeadCell>
+            <Table.HeadCell>Created</Table.HeadCell>
             <Table.HeadCell>Reservations</Table.HeadCell>
             <Table.HeadCell>
-              <span className="sr-only">Edit</span>
+              <span className="sr-only">Actions</span>
             </Table.HeadCell>
           </Table.Head>
           <Table.Body className="divide-y">

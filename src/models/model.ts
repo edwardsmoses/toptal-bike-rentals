@@ -7,6 +7,10 @@ export interface User {
   fullName: string;
   email: string;
   role: UserRole;
+  addedOn: Timestamp;
+  addedBy?: string;
+  updatedOn?: Timestamp;
+  updatedBy?: string;
 }
 
 export interface Bike {
