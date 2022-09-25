@@ -1,9 +1,17 @@
 import { EmptyState } from "components/empty/EmptyState";
 import { UserLayout } from "components/layout/UserLayout";
+import { BIKES_COLLECTION } from "constants/collection";
+import { firestore } from "firebase-app/init";
+import { deleteDoc, doc } from "firebase/firestore";
 import { Button, Card, Dropdown, Rating } from "flowbite-react";
 import { isEmpty, map, range } from "lodash";
 import Link from "next/link";
 import { useRouter } from "next/router";
+
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
+
+import toast from "react-hot-toast";
 import { useAppSelector } from "store/store";
 
 const Bikes = () => {
@@ -62,7 +70,30 @@ const Bikes = () => {
                           Edit Bike
                         </Dropdown.Item>
                         <Dropdown.Item>View Reservations</Dropdown.Item>
-                        <Dropdown.Item>Delete Bike</Dropdown.Item>
+                        <Dropdown.Item
+                          onClick={() => {
+                            confirmAlert({
+                              title: "Delete Bike",
+                              message:
+                                "Are you sure you want to delete this Bike? All reservations would be lost! You can't undo this action.",
+                              buttons: [
+                                {
+                                  label: "Yes, Proceed",
+                                  onClick: async () => {
+                                    await deleteDoc(doc(firestore, BIKES_COLLECTION, bike.id));
+                                    toast.success("You've deleted this Bike");
+                                  },
+                                },
+                                {
+                                  label: "No",
+                                  onClick: () => {},
+                                },
+                              ],
+                            });
+                          }}
+                        >
+                          Delete Bike
+                        </Dropdown.Item>
                       </Dropdown>
                     </div>
                   </div>
