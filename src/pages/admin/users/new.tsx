@@ -9,6 +9,7 @@ import { USERS_COLLECTION } from "constants/collection";
 import { toast } from "react-hot-toast";
 import { useAppSelector } from "store/store";
 import { selectUser } from "store/features/usersSlice";
+import axios from "axios";
 
 const NewUser = () => {
   const router = useRouter();
@@ -50,13 +51,19 @@ const NewUser = () => {
           updatedBy: currentUser.id,
         });
       } else {
-        await addDoc(collection(firestore, USERS_COLLECTION), {
-          email,
-          fullName,
-          role,
-          addedBy: auth.currentUser?.uid || "",
-          addedOn: Timestamp.now(),
-        });
+
+        const response = await axios.post("api/users/", {email: email});
+        console.log(response);
+
+        
+
+        // await addDoc(collection(firestore, USERS_COLLECTION), {
+        //   email,
+        //   fullName,
+        //   role,
+        //   addedBy: auth.currentUser?.uid || "",
+        //   addedOn: Timestamp.now(),
+        // });
       }
 
       router.push("/admin/users");
