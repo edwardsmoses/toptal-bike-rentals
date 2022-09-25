@@ -3,7 +3,7 @@ import { UserLayout } from "components/layout/UserLayout";
 import { Label, TextInput, Button, Spinner, Select, Breadcrumb } from "flowbite-react";
 import { useRouter } from "next/router";
 import { FormEvent, useEffect, useState } from "react";
-import { addDoc, collection, doc, Timestamp, updateDoc } from "firebase/firestore";
+import { addDoc, collection, doc, setDoc, Timestamp, updateDoc } from "firebase/firestore";
 import { auth, firestore } from "firebase-app/init";
 import { USERS_COLLECTION } from "constants/collection";
 import { toast } from "react-hot-toast";
@@ -64,22 +64,28 @@ const NewUser = () => {
             }
           );
 
-          console.log(response);
+          if (response.data.success) {
+            const userRef = doc(firestore, USERS_COLLECTION, response.data.id);
+            await setDoc(userRef, {
+              email,
+              fullName,
+              role,
+              addedBy: auth.currentUser?.uid || "",
+              addedOn: Timestamp.now(),
+            });
+
+            router.push("/admin/users");
+            toast.success(`Awesome! User ${editUserId ? "updated" : "added"} successfully.`);
+            return;
+          }
         }
 
-        // await addDoc(collection(firestore, USERS_COLLECTION), {
-        //   email,
-        //   fullName,
-        //   role,
-        //   addedBy: auth.currentUser?.uid || "",
-        //   addedOn: Timestamp.now(),
-        // });
+        throw new Error();
       }
-
-      // router.push("/admin/users");
-      toast.success(`Awesome! User ${editUserId ? "updated" : "added"} successfully.`);
     } catch (error) {
-      toast.success(`Error ${editUserId ? "updating" : "adding"} user.`);
+      toast.error(
+        `Error ${editUserId ? "updating" : "adding"} user. ${editUserId ? "" : "Email address already exists"}`
+      );
     } finally {
       setIsAdding(false);
     }
@@ -133,6 +139,9 @@ const NewUser = () => {
                 setRole(event.currentTarget.value);
               }}
             >
+              <option value="" disabled>
+                Please select
+              </option>
               <option value="manager">Manager</option>
               <option value="user">User</option>
             </Select>

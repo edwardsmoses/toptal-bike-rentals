@@ -1,14 +1,21 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { auth } from "firebase-app/admin";
+import { auth, firestore } from "firebase-app/admin";
+import { auth as firebaseAuth } from "firebase-app/init";
+import { sendPasswordResetEmail } from "firebase/auth";
+
+import { USERS_COLLECTION } from "constants/collection";
+import { User } from "models/model";
 
 type Data = {
   message?: string;
-  email?: string;
+  success?: boolean;
+  id?: string;
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
-  const { email } = req.body;
+  const { email, fullName } = req.body;
+  const { userId } = req.query;
 
   const authorization = req.headers.authorization;
 
@@ -24,14 +31,39 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   try {
     const { uid } = await auth.verifyIdToken(token);
 
-    if (req.method === "POST") {
-      // Process a POST request
-      console.log("Creating ", email);
-    } else if (req.method === "DELETE") {
-      console.log("Deleting ", email);
+    const userRef = firestore.collection(USERS_COLLECTION).doc(uid);
+    const doc = await userRef.get();
+    if (!doc.exists) {
+      return res.status(401).json({ message: `Error - user don't have required permissions` });
+    } else {
+      const user = doc.data() as User;
+      //if user role isn't manager, user don't have necessary permissions
+      if (user.role !== "manager") {
+        return res.status(401).json({ message: `Error - user don't have required permissions` });
+      }
     }
-    res.status(200).json({ email: email as string });
+
+    if (req.method === "POST") {
+      try {
+        //CREATE USER...
+        const userRecord = await auth.createUser({
+          email: email,
+          displayName: fullName,
+          password: Math.random().toString(36).slice(2), //generate random password, we'd send a password reset email..
+        });
+
+        await sendPasswordResetEmail(firebaseAuth, email);
+
+        return res.status(200).json({ id: userRecord.uid, success: true });
+      } catch (error) {
+        return res.status(500).json({ message: `Error while creating user. Error: ${error}` });
+      }
+    } else if (req.method === "DELETE") {
+      //DELETE USER...
+      await auth.deleteUser(userId);
+      return res.status(200).json({ success: true });
+    }
   } catch (error) {
-    res.status(401).json({ message: `Error while verifying token. Error: ${error}` });
+    return res.status(401).json({ message: `Error while verifying token. Error: ${error}` });
   }
 }

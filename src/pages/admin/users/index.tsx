@@ -1,7 +1,8 @@
+import axios from "axios";
 import { UserLayout } from "components/layout/UserLayout";
 import { USERS_COLLECTION } from "constants/collection";
 import { formatDateInRelativeFormat } from "constants/date";
-import { firestore } from "firebase-app/init";
+import { auth, firestore } from "firebase-app/init";
 import { deleteDoc, doc } from "firebase/firestore";
 import { Button, Dropdown, Table } from "flowbite-react";
 import { capitalize, first, map, size, words } from "lodash";
@@ -96,8 +97,23 @@ const UserRow = ({ user }: UserRowProps) => {
                     {
                       label: "Yes, Proceed",
                       onClick: async () => {
-                        await deleteDoc(doc(firestore, USERS_COLLECTION, user.id));
-                        toast.success("You've deleted this User's account");
+                        const token = await auth.currentUser?.getIdToken();
+
+                        if (token) {
+                          const response = await axios.delete(`/api/users?userId=${user.id}`, {
+                            headers: {
+                              Authorization: `Bearer ${token}`,
+                            },
+                          });
+                          console.log(response);
+                          if (response.data.success) {
+                            await deleteDoc(doc(firestore, USERS_COLLECTION, user.id));
+                            toast.success("You've deleted this User's account");
+                            return;
+                          }
+                        }
+
+                        toast.error("Error deleting user's account");
                       },
                     },
                     {
