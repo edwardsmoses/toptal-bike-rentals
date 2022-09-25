@@ -51,11 +51,21 @@ const NewUser = () => {
           updatedBy: currentUser.id,
         });
       } else {
+        const token = await auth.currentUser?.getIdToken();
 
-        const response = await axios.post("api/users/", {email: email});
-        console.log(response);
+        if (token) {
+          const response = await axios.post(
+            "/api/users/",
+            { email: email },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
 
-        
+          console.log(response);
+        }
 
         // await addDoc(collection(firestore, USERS_COLLECTION), {
         //   email,
@@ -66,7 +76,7 @@ const NewUser = () => {
         // });
       }
 
-      router.push("/admin/users");
+      // router.push("/admin/users");
       toast.success(`Awesome! User ${editUserId ? "updated" : "added"} successfully.`);
     } catch (error) {
       toast.success(`Error ${editUserId ? "updating" : "adding"} user.`);
