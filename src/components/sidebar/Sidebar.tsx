@@ -16,7 +16,7 @@ export const Sidebar = () => {
   return (
     <div className="flex flex-col justify-between min-h-screen bg-white border-r w-fit">
       <div className="flex flex-col">
-        <span className="w-full py-5 mx-auto font-bold text-center bg-gray-200 rounded-lg text-md">Bike Rentals</span>
+        <span className="w-full py-5 mx-auto font-bold text-center bg-gray-200 rounded-lg text-md">BikeRentals</span>
 
         <div className="px-1">
           <nav className="flex flex-col mt-6 space-y-1">
