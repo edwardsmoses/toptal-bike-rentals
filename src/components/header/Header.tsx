@@ -3,6 +3,7 @@ import { Dropdown } from "flowbite-react";
 import { first, words } from "lodash";
 import { currentUserActions } from "store/features/currentUserSlice";
 import { useAppDispatch, useAppSelector } from "store/store";
+import { FilterMenu } from "./FilterMenu";
 
 export const Header = () => {
   const dispatch = useAppDispatch();
@@ -12,35 +13,9 @@ export const Header = () => {
     <header className="w-full bg-gray-50">
       <div className="max-w-screen-xl px-4 py-8 mx-auto sm:px-6 lg:px-8">
         <div className="flex items-center sm:justify-between sm:gap-4">
-          <div className="relative hidden sm:block">
-            <label className="sr-only" htmlFor="search">
-              {" "}
-              Search{" "}
-            </label>
-
-            <input
-              className="w-full h-10 pl-4 pr-10 text-sm bg-white border-none rounded-lg shadow-sm sm:w-56"
-              id="search"
-              type="search"
-              placeholder="Search bikes..."
-            />
-
-            <button
-              className="absolute p-2 text-gray-600 transition -translate-y-1/2 rounded-md hover:text-gray-700 bg-gray-50 top-1/2 right-1"
-              type="button"
-              aria-label="Submit Search"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-4 h-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </button>
+          <div className="relative">
+            {/* Only Display the Filter menu for 'User' role */}
+            {currentUser.role === "user" && <FilterMenu />}
           </div>
 
           <div className="flex items-center justify-between flex-1 gap-8 sm:justify-end">

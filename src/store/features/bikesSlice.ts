@@ -1,23 +1,42 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { filter, find, map } from "lodash";
+import { filter, find, map, uniq } from "lodash";
 import { User, Bike, BikeReservation } from "models/model";
 import { RootState } from "store/store";
 
 type ReserveBikeState = {
-  selectedBike?: Bike;
+  selectedBike?: Bike | null;
   reservationDate?: any;
+};
+
+type FilterBikeState = {
+  model?: string;
+  location?: string;
+  color?: string;
+  startDate?: string;
+  endDate?: string;
+  rating?: number[];
 };
 
 interface BikeSlice {
   allBikes: Array<Bike>;
   allReservations: Array<BikeReservation>;
   reserveBike: ReserveBikeState;
+  filterBikes: FilterBikeState;
 }
 
 const initialState: BikeSlice = {
   allBikes: [],
   allReservations: [],
+  filterBikes: {
+    model: "",
+    location: "",
+    color: "",
+    startDate: "",
+    endDate: "",
+    rating: [],
+  },
   reserveBike: {
+    selectedBike: null,
     reservationDate: {
       startDate: new Date(),
       endDate: new Date(),
@@ -47,6 +66,17 @@ const bikesSlice = createSlice({
         ...initialState.reserveBike,
       };
     },
+    setFilterBikeState(state: BikeSlice, action: PayloadAction<Partial<FilterBikeState>>) {
+      state.filterBikes = {
+        ...(state.filterBikes || {}),
+        ...action.payload,
+      };
+    },
+    resetFilterBikeState(state: BikeSlice) {
+      state.filterBikes = {
+        ...initialState.filterBikes,
+      };
+    },
   },
 });
 
@@ -60,6 +90,14 @@ export type BikeReservationSelectorResponse = BikeReservation & {
 export type AdminBikeReservationSelectorResponse = BikeReservation & {
   bike: Bike;
   user: User;
+};
+
+export const selectFilterBikeOptions = (state: RootState) => {
+  return {
+    model: uniq(map(state.bikes.allBikes, (bike) => bike.model)),
+    location: uniq(map(state.bikes.allBikes, (bike) => bike.location)),
+    color: uniq(map(state.bikes.allBikes, (bike) => bike.color)),
+  };
 };
 
 export const selectCurrentUserReservations = (state: RootState): BikeReservationSelectorResponse[] => {
