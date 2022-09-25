@@ -1,8 +1,17 @@
 import { UserLayout } from "components/layout/UserLayout";
-import { Button, Table } from "flowbite-react";
-import { capitalize, map, size } from "lodash";
+import { USERS_COLLECTION } from "constants/collection";
+import { firestore } from "firebase-app/init";
+import { deleteDoc, doc } from "firebase/firestore";
+import { Button, Dropdown, Table } from "flowbite-react";
+import { capitalize, first, map, size, words } from "lodash";
 import { User } from "models/model";
 import Link from "next/link";
+import { useRouter } from "next/router";
+
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
+
+import toast from "react-hot-toast";
 import { selectUserReservations } from "store/features/bikesSlice";
 import { useAppSelector } from "store/store";
 
@@ -11,7 +20,9 @@ type UserRowProps = {
 };
 
 const UserRow = ({ user }: UserRowProps) => {
+  const currentUser = useAppSelector((state) => state.currentUser.user);
   const reservations = useAppSelector((state) => selectUserReservations(state, user.id));
+  const router = useRouter();
 
   return (
     <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800" key={user.id}>
@@ -30,9 +41,52 @@ const UserRow = ({ user }: UserRowProps) => {
         )}
       </Table.Cell>
       <Table.Cell>
-        <a href="/" className="font-medium text-blue-600 hover:underline dark:text-blue-500">
-          Edit
-        </a>
+        <Dropdown label="Actions" size="sm">
+          <Dropdown.Item
+            onClick={() => {
+              router.push(`/admin/users/reservations?id=${user.id}`);
+            }}
+          >
+            View Reservations
+          </Dropdown.Item>
+          <Dropdown.Item
+            onClick={() => {
+              router.push(`/admin/users/new?id=${user.id}`);
+            }}
+          >
+            Edit
+          </Dropdown.Item>
+          {user.id !== currentUser.id && (
+            <Dropdown.Item
+              onClick={() => {
+                //user can't delete his own profile..
+                if (user.id === currentUser.id) {
+                  return;
+                }
+
+                confirmAlert({
+                  title: "Delete User",
+                  message: "Are you sure you want to delete this User? You can't undo this action.",
+                  buttons: [
+                    {
+                      label: "Yes, Proceed",
+                      onClick: async () => {
+                        await deleteDoc(doc(firestore, USERS_COLLECTION, user.id));
+                        toast.success("You've deleted this User's account");
+                      },
+                    },
+                    {
+                      label: "No",
+                      onClick: () => {},
+                    },
+                  ],
+                });
+              }}
+            >
+              Delete
+            </Dropdown.Item>
+          )}
+        </Dropdown>
       </Table.Cell>
     </Table.Row>
   );
