@@ -3,10 +3,13 @@ import { UserLayout } from "components/layout/UserLayout";
 import { Button, Card, Dropdown, Rating } from "flowbite-react";
 import { isEmpty, map, range } from "lodash";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useAppSelector } from "store/store";
 
 const Bikes = () => {
   const allBikes = useAppSelector((state) => state.bikes.allBikes);
+
+  const router = useRouter();
 
   return (
     <UserLayout>
@@ -51,7 +54,13 @@ const Bikes = () => {
 
                     <div className="absolute top-1 right-1">
                       <Dropdown label="Manage" inline={true}>
-                        <Dropdown.Item>Edit Bike</Dropdown.Item>
+                        <Dropdown.Item
+                          onClick={() => {
+                            router.push(`/admin/bikes/new?id=${bike.id}`);
+                          }}
+                        >
+                          Edit Bike
+                        </Dropdown.Item>
                         <Dropdown.Item>View Reservations</Dropdown.Item>
                         <Dropdown.Item>Delete Bike</Dropdown.Item>
                       </Dropdown>

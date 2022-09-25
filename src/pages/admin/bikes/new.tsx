@@ -1,42 +1,73 @@
 import { UserLayout } from "components/layout/UserLayout";
 
-import { Label, TextInput, Checkbox, Button, Spinner, Rating } from "flowbite-react";
-import Link from "next/link";
+import { Label, TextInput, Button, Spinner, ToggleSwitch } from "flowbite-react";
 import { useRouter } from "next/router";
-import { FormEvent, useState } from "react";
-import { map, range } from "lodash";
-import { addDoc, collection } from "firebase/firestore";
-import { auth, firestore } from "firebase-app/init";
+import { FormEvent, useEffect, useState } from "react";
+import { find } from "lodash";
+import { addDoc, collection, doc, Timestamp, updateDoc } from "firebase/firestore";
+import { firestore } from "firebase-app/init";
 import { BIKES_COLLECTION } from "constants/collection";
 import { toast } from "react-hot-toast";
+import { useAppSelector } from "store/store";
 
 const NewBike = () => {
   const router = useRouter();
+  const { id } = router.query;
 
+  const bikes = useAppSelector((state) => state.bikes.allBikes);
+  const currentUser = useAppSelector((state) => state.currentUser.user);
+
+  const [editBikeId, setEditBikeId] = useState("");
   const [model, setModel] = useState("");
   const [color, setColor] = useState("");
   const [location, setLocation] = useState("");
-  const [rating, setRating] = useState(0);
+
   const [isAvailableForRental, setIsAvailableForRental] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
 
-  const handleAddNewBike = async (event: FormEvent) => {
+  useEffect(() => {
+    const currentBike = find(bikes, (bike) => bike.id === id);
+    if (currentBike) {
+      setEditBikeId(currentBike.id);
+      setModel(currentBike.model);
+      setColor(currentBike.color);
+      setLocation(currentBike.location);
+      setIsAvailableForRental(currentBike.isAvailableForRental);
+    }
+  }, [id]);
+
+  const handleSaveBike = async (event: FormEvent) => {
     event.preventDefault();
 
     try {
       setIsAdding(true);
-      await addDoc(collection(firestore, BIKES_COLLECTION), {
+
+      const bikeInfo = {
         model,
         color,
         location,
-        rating,
         isAvailableForRental,
-        addedBy: auth.currentUser?.uid || "",
-      });
+      };
+
+      if (editBikeId) {
+        const bikeRef = doc(firestore, BIKES_COLLECTION, editBikeId);
+        await updateDoc(bikeRef, {
+          ...bikeInfo,
+          updatedOn: Timestamp.now(),
+          updatedBy: currentUser.id,
+        });
+      } else {
+        await addDoc(collection(firestore, BIKES_COLLECTION), {
+          ...bikeInfo,
+          addedOn: Timestamp.now(),
+          addedBy: currentUser.id,
+        });
+      }
+
       router.push("/admin/bikes");
-      toast.success("Awesome! Your bike has been added successfully.");
+      toast.success(`Awesome! Your bike has been ${editBikeId ? "updated" : "added"} successfully.`);
     } catch (error) {
-      toast.error("There was an error while adding your bike");
+      toast.error(`There was an error while ${editBikeId ? "updating" : "adding"} your bike`);
     } finally {
       setIsAdding(false);
     }
@@ -45,9 +76,9 @@ const NewBike = () => {
   return (
     <UserLayout>
       <div className="p-10">
-        <h3 className="font-sans text-2xl font-medium">Add a new Bike</h3>
+        <h3 className="font-sans text-2xl font-medium">{editBikeId ? "Edit" : "Add a new"} Bike</h3>
 
-        <form action="#" className="grid grid-cols-6 gap-6 mt-8" onSubmit={handleAddNewBike}>
+        <form action="#" className="grid grid-cols-6 gap-6 mt-8" onSubmit={handleSaveBike}>
           <div className="col-span-6">
             <Label htmlFor="model" value="Model" />
             <TextInput
@@ -86,34 +117,12 @@ const NewBike = () => {
             />
           </div>
 
-          <div className="col-span-6">
-            <Label htmlFor="rating" value="Rating" />
-            <Rating>
-              {map(range(1, 6), (star) => {
-                return (
-                  <button
-                    key={star}
-                    type="button"
-                    onClick={() => {
-                      setRating(star);
-                    }}
-                  >
-                    <Rating.Star filled={star <= rating} />
-                  </button>
-                );
-              })}
-            </Rating>
-          </div>
-
           <div className="col-span-6 space-x-2">
-            <Checkbox
-              id="available"
+            <ToggleSwitch
               checked={isAvailableForRental}
-              onChange={(event) => {
-                setIsAvailableForRental(event.currentTarget.checked);
-              }}
+              label="Is this bike available for rental?"
+              onChange={setIsAvailableForRental}
             />
-            <Label htmlFor="available">Is this bike available for rental?</Label>
           </div>
 
           <div className="col-span-6 space-y-2">
@@ -123,7 +132,7 @@ const NewBike = () => {
                   <Spinner size="sm" light={true} />
                 </div>
               )}
-              Add Bike
+              {editBikeId ? "Update" : "Add"} Bike
             </Button>
           </div>
         </form>

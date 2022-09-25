@@ -16,7 +16,10 @@ export interface Bike {
   location: string;
   rating: number;
   isAvailableForRental: boolean;
+  addedOn: string;
   addedBy: string;
+  updatedOn?: string;
+  updatedBy?: string;
 }
 
 export interface BikeReservation {
