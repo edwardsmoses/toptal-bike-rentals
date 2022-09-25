@@ -1,6 +1,6 @@
 import { UserLayout } from "components/layout/UserLayout";
 
-import { Label, TextInput, Button, Spinner, ToggleSwitch } from "flowbite-react";
+import { Label, TextInput, Button, Spinner, ToggleSwitch, Breadcrumb } from "flowbite-react";
 import { useRouter } from "next/router";
 import { FormEvent, useEffect, useState } from "react";
 import { find } from "lodash";
@@ -75,6 +75,10 @@ const NewBike = () => {
 
   return (
     <UserLayout>
+       <Breadcrumb className="px-5 py-3 bg-gray-50 dark:bg-gray-900">
+        <Breadcrumb.Item href="/admin/">Dashboard</Breadcrumb.Item>
+        <Breadcrumb.Item href="/admin/bikes">All Bikes</Breadcrumb.Item>
+      </Breadcrumb>
       <div className="p-10">
         <h3 className="font-sans text-2xl font-medium">{editBikeId ? "Edit" : "Add a new"} Bike</h3>
 

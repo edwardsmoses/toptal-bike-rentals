@@ -69,7 +69,13 @@ const Bikes = () => {
                         >
                           Edit Bike
                         </Dropdown.Item>
-                        <Dropdown.Item>View Reservations</Dropdown.Item>
+                        <Dropdown.Item
+                          onClick={() => {
+                            router.push(`/admin/bikes/reservations?id=${bike.id}`);
+                          }}
+                        >
+                          View Reservations
+                        </Dropdown.Item>
                         <Dropdown.Item
                           onClick={() => {
                             confirmAlert({

@@ -13,12 +13,16 @@ export const useAuthUser = () => {
 
   useEffect(() => {
     let dataListeners: Array<Function> = [];
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setUser(user);
 
-        dataListeners = dispatch(startAppDataLoad()) as unknown as Array<Function>;
-        setLoading(false);
+        dataListeners = (await dispatch(
+          startAppDataLoad(() => {
+            setLoading(false);
+          })
+        )) as unknown as Array<Function>;
+
       } else {
         setUser(null);
         setLoading(false);

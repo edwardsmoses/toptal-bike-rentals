@@ -1,37 +1,61 @@
 import { BIKES_COLLECTION, RESERVATIONS_COLLECTION, USERS_COLLECTION } from "constants/collection";
 import { auth, firestore } from "firebase-app/init";
-import { collection, doc, onSnapshot, query, where } from "firebase/firestore";
+import { collection, doc, getDoc, onSnapshot, query, where } from "firebase/firestore";
 import { Bike, BikeReservation, User } from "models/model";
 import { bikesActions } from "store/features/bikesSlice";
 import { currentUserActions } from "store/features/currentUserSlice";
 import { usersActions } from "store/features/usersSlice";
 import { AppThunk } from "store/store";
 
-export const startAppDataLoad = (): AppThunk<void> => {
-  return (dispatch) => {
+export const startAppDataLoad = (onLoadUserCompleteCallback: () => void): AppThunk<void> => {
+  return async (dispatch) => {
     const listeners = [];
 
     const currentUserId = auth.currentUser?.uid || "";
 
-    //get current user doc..
-    listeners.push(getCurrentUser(currentUserId, dispatch));
+    const currentUser = await getCurrentUser(currentUserId, dispatch);
+    onLoadUserCompleteCallback();
 
-    listeners.push(getAllUsers(dispatch));
+    if (currentUser.role === "manager") {
+      listeners.push(getAllUsers(dispatch));
+      listeners.push(getAllReservations(dispatch));
+    } else {
+      listeners.push(getCurrentUserReservations(currentUserId, dispatch));
+    }
+
     listeners.push(getAllBikes(dispatch));
-    listeners.push(getCurrentUserReservations(currentUserId, dispatch));
 
     return listeners;
   };
 };
 
-const getCurrentUser = (currentUserId: string, dispatch: Function) => {
-  const unsubscribe = onSnapshot(doc(firestore, USERS_COLLECTION, currentUserId), (doc) => {
-    dispatch(
-      currentUserActions.updateCurrentUser({
-        ...(doc.data() as User),
-        id: currentUserId,
-      })
-    );
+const getCurrentUser = async (currentUserId: string, dispatch: Function) => {
+  const docRef = doc(firestore, USERS_COLLECTION, currentUserId);
+  const docSnap = await getDoc(docRef);
+
+  dispatch(
+    currentUserActions.updateCurrentUser({
+      ...(docSnap.data() as User),
+      id: currentUserId,
+    })
+  );
+
+  return {
+    ...(docSnap.data() as User),
+  };
+};
+
+const getAllReservations = (dispatch: Function) => {
+  const q = query(collection(firestore, RESERVATIONS_COLLECTION));
+  const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const reservations: BikeReservation[] = [];
+    querySnapshot.forEach((doc) => {
+      reservations.push({
+        ...(doc.data() as BikeReservation),
+        id: doc.id,
+      });
+    });
+    dispatch(bikesActions.setReservations(reservations));
   });
   return unsubscribe;
 };
@@ -56,7 +80,10 @@ const getAllUsers = (dispatch: Function) => {
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
     const users: User[] = [];
     querySnapshot.forEach((doc) => {
-      users.push(doc.data() as User);
+      users.push({
+        ...(doc.data() as User),
+        id: doc.id,
+      });
     });
     dispatch(usersActions.setUsers(users));
   });
