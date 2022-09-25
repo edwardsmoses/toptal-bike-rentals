@@ -106,4 +106,9 @@ export const selectBikeReservations = (state: RootState, bikeId: string): AdminB
   return filter(reservations, (reservation) => reservation.bikeId === bikeId);
 };
 
+export const selectUserReservations = (state: RootState, userId: string): AdminBikeReservationSelectorResponse[] => {
+  const reservations = selectAllReservations(state);
+  return filter(reservations, (reservation) => reservation.reservedBy === userId);
+};
+
 export { bikesActions, bikesReducer };
