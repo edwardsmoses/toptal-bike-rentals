@@ -2,24 +2,94 @@ import { EmptyState } from "components/empty/EmptyState";
 import { UserLayout } from "components/layout/UserLayout";
 import { RESERVATIONS_COLLECTION } from "constants/collection";
 import { formatDateInRelativeFormat } from "constants/date";
-import { format, formatRelative } from "date-fns";
 import { firestore } from "firebase-app/init";
-import { deleteDoc, doc } from "firebase/firestore";
-import { Button } from "flowbite-react";
-import { isEmpty, map } from "lodash";
+import { deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { Button, Modal, Rating, Spinner } from "flowbite-react";
+import { isEmpty, map, range } from "lodash";
+import { useState } from "react";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { toast } from "react-hot-toast";
 
-import { selectCurrentUserReservations } from "store/features/bikesSlice";
+import { BikeReservationSelectorResponse, selectCurrentUserReservations } from "store/features/bikesSlice";
 import { useAppSelector } from "store/store";
 
+type BikeReservationProp = {
+  reservation: BikeReservationSelectorResponse;
+  rateReservation: () => void;
+  cancelReservation: (reservationId: string) => void;
+};
+const Reservation = ({ reservation, rateReservation, cancelReservation }: BikeReservationProp) => {
+  return (
+    <div className="relative block border border-gray-100" key={reservation.id}>
+      <img
+        src="https://images.unsplash.com/photo-1456948927036-ad533e53865c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
+        className="object-contain w-full"
+      />
+
+      <div className="absolute flex justify-between top-3 left-1 right-1">
+        <p className="flex flex-col px-4 py-2 text-xs bg-gray-100 rounded-sm">
+          <span>Reservation Date:</span>
+          <span>{formatDateInRelativeFormat(reservation.startDate)} -</span>
+          <span>{formatDateInRelativeFormat(reservation.endDate || reservation.startDate)} -</span>
+        </p>
+
+        <div className="flex flex-col space-y-1">
+          {!reservation.rating && (
+            <Button type="button" size="xs" color="light" onClick={rateReservation}>
+              Rate Bike
+            </Button>
+          )}
+
+          <Button
+            type="button"
+            size="xs"
+            color="failure"
+            onClick={() => {
+              confirmAlert({
+                title: "Cancel Reservation",
+                message: "Are you sure you want to cancel your Reservation? You can't undo this action.",
+                buttons: [
+                  {
+                    label: "Yes, Proceed",
+                    onClick: () => {
+                      cancelReservation(reservation.id);
+                    },
+                  },
+                  {
+                    label: "No",
+                    onClick: () => {},
+                  },
+                ],
+              });
+            }}
+          >
+            Cancel Reservation
+          </Button>
+        </div>
+      </div>
+
+      <div className="px-6 py-2 space-y-1">
+        <h5 className="text-lg font-bold">
+          {reservation.bike.location}, {reservation.bike.model}
+        </h5>
+        <span className="text-sm"></span>
+
+        <p className="text-xs text-gray-700">reserved on: {formatDateInRelativeFormat(reservation.reservedOn)}</p>
+      </div>
+    </div>
+  );
+};
+
 const Reservations = () => {
+  const [rateReservationId, setRateReservationId] = useState("");
+  const [bikeRating, setBikeRating] = useState(0);
+  const [isProcessing, setIsProcessing] = useState(false);
+
   const reservations = useAppSelector(selectCurrentUserReservations);
 
   const cancelReservation = async (reservationId: string) => {
     try {
-      console.log(reservationId);
       await deleteDoc(doc(firestore, RESERVATIONS_COLLECTION, reservationId));
       toast.success("You've cancelled your reservation");
     } catch (error) {
@@ -28,78 +98,104 @@ const Reservations = () => {
     }
   };
 
+  const handleRateReservation = async () => {
+    try {
+      setIsProcessing(true);
+      const reservationRef = doc(firestore, RESERVATIONS_COLLECTION, rateReservationId);
+      await updateDoc(reservationRef, {
+        rating: bikeRating,
+      });
+      setRateReservationId("");
+      toast.success("Thanks for the rating!");
+    } catch (error) {
+      console.log(error);
+      toast.error("Error saving your Rating");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   return (
-    <UserLayout>
-      <div className="p-10">
-        <h3 className="font-sans text-2xl font-medium">My Reservations</h3>
+    <>
+      <UserLayout>
+        <div className="p-10">
+          <h3 className="font-sans text-2xl font-medium">My Reservations</h3>
 
-        {isEmpty(reservations) && (
-          <EmptyState
-            title="There's nothing here"
-            message="Bikes you've reserved would appear here, try reserving one"
-            linkText="Reserve a bike"
-            link="/users/"
-          />
-        )}
+          {isEmpty(reservations) && (
+            <EmptyState
+              title="There's nothing here"
+              message="Bikes you've reserved would appear here, try reserving one"
+              linkText="Reserve a bike"
+              link="/users/"
+            />
+          )}
 
-        <div className="grid grid-cols-3 mt-8 gap-x-4 gap-y-8">
-          {map(reservations, (reservation) => {
-            return (
-              <div className="relative block border border-gray-100" key={reservation.id}>
-                <img
-                  src="https://images.unsplash.com/photo-1456948927036-ad533e53865c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
-                  className="object-contain w-full"
+          <div className="grid grid-cols-3 mt-8 gap-x-4 gap-y-8">
+            {map(reservations, (reservation) => {
+              return (
+                <Reservation
+                  reservation={reservation}
+                  cancelReservation={cancelReservation}
+                  rateReservation={() => {
+                    setRateReservationId(reservation.id);
+                  }}
                 />
+              );
+            })}
+          </div>
+        </div>
+      </UserLayout>
 
-                <div className="absolute flex justify-between top-3 left-1 right-1">
-                  <p className="flex flex-col px-4 py-2 text-xs bg-gray-100 rounded-sm">
-                    <span>Reservation Date:</span>
-                    <span>{formatDateInRelativeFormat(reservation.startDate)} -</span>
-                    <span>{formatDateInRelativeFormat(reservation.endDate || reservation.startDate)} -</span>
-                  </p>
-
-                  <Button
-                    type="button"
-                    size="xs"
-                    onClick={() => {
-                      confirmAlert({
-                        title: "Cancel Reservation",
-                        message: "Are you sure you want to cancel your Reservation? You can't undo this action.",
-                        buttons: [
-                          {
-                            label: "Yes, Proceed",
-                            onClick: () => {
-                              cancelReservation(reservation.id);
-                            },
-                          },
-                          {
-                            label: "No",
-                            onClick: () => {},
-                          },
-                        ],
-                      });
-                    }}
-                  >
-                    Cancel Reservation
-                  </Button>
-                </div>
-
-                <div className="px-6 py-2 space-y-1">
-                  <h5 className="text-lg font-bold">
-                    {reservation.bike.location}, {reservation.bike.model}
-                  </h5>
-                  <span className="text-sm"></span>
-
-                  <p className="text-xs text-gray-700">
-                    reserved on: {formatDateInRelativeFormat(reservation.reservedOn)}
-                  </p>
+      <Modal
+        show={!!rateReservationId}
+        onClose={() => {
+          setRateReservationId("");
+        }}
+        popup={true}
+        size="sm"
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <div className="flex">
+            <div className="flex flex-col mx-auto space-y-2 text-center w-fit">
+              <h1 className="text-3xl">How was the bike?</h1>
+              <div className="flex">
+                <div className="mx-auto w-fit">
+                  <Rating size={"lg"}>
+                    {map(range(1, 6), (star) => {
+                      return (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => {
+                            setBikeRating(star);
+                          }}
+                        >
+                          <Rating.Star filled={star <= bikeRating} />
+                        </button>
+                      );
+                    })}
+                  </Rating>
                 </div>
               </div>
-            );
-          })}
-        </div>
-      </div>
-    </UserLayout>
+
+              <div className="mx-auto">
+                <Button size="sm" color="success" onClick={handleRateReservation} disabled={isProcessing}>
+                  <span className="flex flex-row px-20">
+                    {isProcessing && (
+                      <div className="mr-3">
+                        <Spinner size="sm" light={true} />
+                      </div>
+                    )}
+                    Done
+                  </span>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
+    </>
   );
 };
 

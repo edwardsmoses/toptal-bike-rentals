@@ -24,6 +24,7 @@ export interface BikeReservation {
   bikeId: string;
   startDate: Timestamp;
   endDate: Timestamp;
+  rating?: number;
   reservedBy: string;
   reservedOn: Timestamp;
 }

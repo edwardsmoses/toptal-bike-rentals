@@ -54,7 +54,7 @@ const bikesSlice = createSlice({
 const bikesActions = bikesSlice.actions;
 const bikesReducer = bikesSlice.reducer;
 
-type BikeReservationSelectorResponse = BikeReservation & {
+export type BikeReservationSelectorResponse = BikeReservation & {
   bike: Bike;
 };
 export const selectCurrentUserReservations = (state: RootState): BikeReservationSelectorResponse[] => {
