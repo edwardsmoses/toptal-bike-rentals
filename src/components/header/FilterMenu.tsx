@@ -1,5 +1,6 @@
 import { Dropdown, Rating, Select } from "flowbite-react";
-import { capitalize, filter, includes, map, range } from "lodash";
+import { capitalize, filter, includes, isEmpty, map, range } from "lodash";
+import { useRef } from "react";
 import { DateRange } from "react-date-range";
 import { bikesActions, selectFilterBikeOptions } from "store/features/bikesSlice";
 import { useAppDispatch, useAppSelector } from "store/store";
@@ -10,8 +11,46 @@ export const FilterMenu = () => {
   const { color, model, location, rating, endDate, startDate } = useAppSelector((state) => state.bikes.filterBikes);
   const selectOptions = useAppSelector(selectFilterBikeOptions);
 
+  const buttonRef = useRef<HTMLSpanElement | null>(null);
+
   return (
-    <Dropdown label="Filter Bikes" inline={true}>
+    <Dropdown
+      label={
+        <span className={"relative"} ref={buttonRef}>
+          Filter Bikes
+          {(!!color || !!model || !!location || !isEmpty(rating) || !!endDate || !!startDate) && (
+            <span className="absolute top-0 block w-2 h-2 bg-blue-600 rounded-full -right-8 animate-pulse"></span>
+          )}
+        </span>
+      }
+      inline={true}
+    >
+      <div className="flex justify-between px-5 py-3 border-b border-gray-200">
+        <span></span>
+        <div className="flex flex-row space-x-2">
+          <button
+            name="reset"
+            type="button"
+            onClick={() => {
+              dispatch(bikesActions.resetFilterBikeState());
+            }}
+            className="text-xs font-medium text-gray-600 underline rounded"
+          >
+            Reset All
+          </button>
+          <button
+            name="reset"
+            type="button"
+            onClick={() => {
+              buttonRef.current?.click();
+            }}
+            className="text-xs font-medium text-gray-600 underline rounded"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+
       <div className="border-t border-gray-200 lg:border-t-0 min-w-[400px] max-h-[500px] overflow-y-scroll z-30">
         <fieldset>
           <legend className="block w-full px-5 py-3 text-xs font-medium bg-gray-50">Model</legend>
@@ -200,19 +239,6 @@ export const FilterMenu = () => {
               Reset Dates
             </button>
           </div>
-        </div>
-
-        <div className="flex justify-between px-5 py-3 border-t border-gray-200">
-          <button
-            name="reset"
-            type="button"
-            onClick={() => {
-              dispatch(bikesActions.resetFilterBikeState());
-            }}
-            className="text-xs font-medium text-gray-600 underline rounded"
-          >
-            Reset All
-          </button>
         </div>
       </div>
     </Dropdown>

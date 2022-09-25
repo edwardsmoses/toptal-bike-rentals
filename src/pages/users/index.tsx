@@ -1,19 +1,28 @@
 import { ReserveBikeModal } from "components/bikes/ReserveModal";
+import { EmptyState } from "components/empty/EmptyState";
 import { UserLayout } from "components/layout/UserLayout";
 import { calculateBikeRating } from "constants/ratings";
-import { map } from "lodash";
-import { bikesActions } from "store/features/bikesSlice";
+import { isEmpty, map } from "lodash";
+import { bikesActions, selectBikesForRental } from "store/features/bikesSlice";
 import { useAppDispatch, useAppSelector } from "store/store";
 
 const Dashboard = () => {
   const dispatch = useAppDispatch();
-  const allBikes = useAppSelector((state) => state.bikes.allBikes);
+  const allBikes = useAppSelector(selectBikesForRental);
 
   return (
     <>
       <UserLayout>
         <div className="p-10">
           <h3 className="font-sans text-2xl font-medium">All Bikes</h3>
+
+          {isEmpty(allBikes) && (
+            <div className="flex w-full">
+              <div className="m-auto">
+                <EmptyState title="No Bikes found" message="There are no bikes found with the current filter." />
+              </div>
+            </div>
+          )}
 
           {map(allBikes, (bike) => {
             return (

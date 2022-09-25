@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { filter, find, map, uniq } from "lodash";
+import { calculateBikeRating } from "constants/ratings";
+import { filter, find, includes, isEmpty, lowerCase, map, uniq } from "lodash";
 import { User, Bike, BikeReservation } from "models/model";
 import { RootState } from "store/store";
 
@@ -94,10 +95,39 @@ export type AdminBikeReservationSelectorResponse = BikeReservation & {
 
 export const selectFilterBikeOptions = (state: RootState) => {
   return {
-    model: uniq(map(state.bikes.allBikes, (bike) => bike.model)),
-    location: uniq(map(state.bikes.allBikes, (bike) => bike.location)),
-    color: uniq(map(state.bikes.allBikes, (bike) => bike.color)),
+    model: uniq(map(state.bikes.allBikes, (bike) => lowerCase(bike.model))),
+    location: uniq(map(state.bikes.allBikes, (bike) => lowerCase(bike.location))),
+    color: uniq(map(state.bikes.allBikes, (bike) => lowerCase(bike.color))),
   };
+};
+
+export const selectBikesForRental = (state: RootState) => {
+  const { color, location, model, rating, startDate, endDate } = state.bikes.filterBikes;
+
+  let bikesAvailableForRental = filter(state.bikes.allBikes, (bike) => bike.isAvailableForRental);
+
+  if (color) {
+    bikesAvailableForRental = filter(bikesAvailableForRental, (bike) => lowerCase(bike.color) === lowerCase(color));
+  }
+
+  if (location) {
+    bikesAvailableForRental = filter(
+      bikesAvailableForRental,
+      (bike) => lowerCase(bike.location) === lowerCase(location)
+    );
+  }
+
+  if (model) {
+    bikesAvailableForRental = filter(bikesAvailableForRental, (bike) => lowerCase(bike.model) === lowerCase(model));
+  }
+
+  if (!isEmpty(rating)) {
+    bikesAvailableForRental = filter(bikesAvailableForRental, (bike) =>
+      includes(rating, Math.round(calculateBikeRating(bike.ratings)))
+    );
+  }
+
+  return bikesAvailableForRental;
 };
 
 export const selectCurrentUserReservations = (state: RootState): BikeReservationSelectorResponse[] => {

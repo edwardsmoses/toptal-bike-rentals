@@ -8,7 +8,7 @@ import { selectBikeReservations, selectUserReservations } from "store/features/b
 import { selectUser } from "store/features/usersSlice";
 import { useAppSelector } from "store/store";
 
-const BikeReservations = () => {
+const UserReservations = () => {
   const router = useRouter();
   const { id } = router.query;
 
@@ -29,8 +29,8 @@ const BikeReservations = () => {
 
         {isEmpty(bikesReservations) && (
           <EmptyState
-            title="No Reservations for this Bike"
-            message="There are no reservations for this bike yet. You can check back later"
+            title="No Reservations for this User"
+            message="This user hasn't made any reservations yet. You can check back later"
           />
         )}
         {!isEmpty(bikesReservations) && (
@@ -64,4 +64,4 @@ const BikeReservations = () => {
   );
 };
 
-export default BikeReservations;
+export default UserReservations;
