@@ -63,7 +63,7 @@ const Login = () => {
         </div>
 
         <div className="col-span-6 space-y-2">
-          <Button type="submit">
+          <Button type="submit" disabled={isProcessing}>
             {isProcessing && (
               <div className="mr-3">
                 <Spinner size="sm" light={true} />

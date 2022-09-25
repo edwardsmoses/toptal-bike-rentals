@@ -7,11 +7,16 @@ import { currentUserActions } from "store/features/currentUserSlice";
 import { usersActions } from "store/features/usersSlice";
 import { AppThunk } from "store/store";
 
-export const startAppDataLoad = (onLoadUserCompleteCallback: () => void): AppThunk<void> => {
+export const startAppDataLoad = (
+  onLoadStartCallback: () => void,
+  onLoadUserCompleteCallback: () => void
+): AppThunk<void> => {
   return async (dispatch) => {
     const listeners = [];
 
     const currentUserId = auth.currentUser?.uid || "";
+
+    onLoadStartCallback();
 
     const currentUser = await getCurrentUser(currentUserId, dispatch);
     onLoadUserCompleteCallback();

@@ -18,11 +18,15 @@ export const useAuthUser = () => {
         setUser(user);
 
         dataListeners = (await dispatch(
-          startAppDataLoad(() => {
-            setLoading(false);
-          })
+          startAppDataLoad(
+            () => {
+              setLoading(true);
+            },
+            () => {
+              setLoading(false);
+            }
+          )
         )) as unknown as Array<Function>;
-
       } else {
         setUser(null);
         setLoading(false);
