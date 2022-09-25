@@ -1,14 +1,15 @@
 import { UserLayout } from "components/layout/UserLayout";
 
-import { Label, TextInput, Button, Spinner, ToggleSwitch, Breadcrumb } from "flowbite-react";
+import { Label, TextInput, Button, Spinner, ToggleSwitch, Breadcrumb, FileInput } from "flowbite-react";
 import { useRouter } from "next/router";
 import { FormEvent, useEffect, useState } from "react";
 import { find } from "lodash";
 import { addDoc, collection, doc, Timestamp, updateDoc } from "firebase/firestore";
-import { firestore } from "firebase-app/init";
+import { firestore, storage } from "firebase-app/init";
 import { BIKES_COLLECTION } from "constants/collection";
 import { toast } from "react-hot-toast";
 import { useAppSelector } from "store/store";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 const NewBike = () => {
   const router = useRouter();
@@ -17,6 +18,7 @@ const NewBike = () => {
   const bikes = useAppSelector((state) => state.bikes.allBikes);
   const currentUser = useAppSelector((state) => state.currentUser.user);
 
+  const [bikeImage, setBikeImage] = useState<File | null>(null);
   const [editBikeId, setEditBikeId] = useState("");
   const [model, setModel] = useState("");
   const [color, setColor] = useState("");
@@ -42,11 +44,24 @@ const NewBike = () => {
     try {
       setIsAdding(true);
 
+      let uploadedBikeImage = "";
+
+      if (bikeImage) {
+        const storageRef = ref(storage, `${currentUser.id}/${Date.now().valueOf()}-${bikeImage.name}`);
+
+        // 'file' comes from the Blob or File API
+        const snapshot = await uploadBytes(storageRef, bikeImage);
+        console.log(snapshot);
+
+        uploadedBikeImage = await getDownloadURL(snapshot.ref);
+      }
+
       const bikeInfo = {
         model,
         color,
         location,
         isAvailableForRental,
+        image: uploadedBikeImage,
       };
 
       if (editBikeId) {
@@ -67,6 +82,7 @@ const NewBike = () => {
       router.push("/admin/bikes");
       toast.success(`Awesome! Your bike has been ${editBikeId ? "updated" : "added"} successfully.`);
     } catch (error) {
+      console.log(error);
       toast.error(`There was an error while ${editBikeId ? "updating" : "adding"} your bike`);
     } finally {
       setIsAdding(false);
@@ -75,7 +91,7 @@ const NewBike = () => {
 
   return (
     <UserLayout>
-       <Breadcrumb className="px-5 py-3 bg-gray-50 dark:bg-gray-900">
+      <Breadcrumb className="px-5 py-3 bg-gray-50 dark:bg-gray-900">
         <Breadcrumb.Item href="/admin/">Dashboard</Breadcrumb.Item>
         <Breadcrumb.Item href="/admin/bikes">All Bikes</Breadcrumb.Item>
       </Breadcrumb>
@@ -83,6 +99,22 @@ const NewBike = () => {
         <h3 className="font-sans text-2xl font-medium">{editBikeId ? "Edit" : "Add a new"} Bike</h3>
 
         <form action="#" className="grid grid-cols-6 gap-6 mt-8" onSubmit={handleSaveBike}>
+          <div id="fileUpload" className="col-span-6">
+            <div className="block mb-2">
+              <Label htmlFor="file" value="Upload Bike picture (optional)" />
+            </div>
+            <FileInput
+              id="file"
+              accept="image/*"
+              onChange={(event) => {
+                if (event.currentTarget.files?.length) {
+                  setBikeImage(event.currentTarget.files[0]!);
+                }
+              }}
+              helperText="An image would be helpful to people who want to rent this bike"
+            />
+          </div>
+
           <div className="col-span-6">
             <Label htmlFor="model" value="Model" />
             <TextInput

@@ -35,13 +35,12 @@ export const ReserveBikeModal = () => {
       const reservationRef = doc(collection(firestore, RESERVATIONS_COLLECTION));
 
       await runTransaction(firestore, async (transaction) => {
-
-        //update the reservation dates on the 
+        //update the reservation dates on the
         transaction.update(bikeRef, {
           [`reservationDates.${reservationRef.id}`]: [reservationDate.startDate, reservationDate.endDate],
         });
 
-        //add the reservation.. 
+        //add the reservation..
         transaction.set(reservationRef, {
           bikeId: selectedBike?.id,
           startDate: reservationDate.startDate,
@@ -78,8 +77,7 @@ export const ReserveBikeModal = () => {
               <div className="grid items-start grid-cols-1 gap-8 md:grid-cols-2">
                 <div className="grid grid-cols-1 gap-4">
                   <img
-                    alt="Les Paul"
-                    src="https://images.unsplash.com/photo-1456948927036-ad533e53865c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
+                    src={selectedBike.image || "/default.jpg"}
                     className="object-cover w-full aspect-square rounded-xl"
                   />
                 </div>

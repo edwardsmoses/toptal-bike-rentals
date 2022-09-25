@@ -23,7 +23,7 @@ const Reservation = ({ reservation, rateReservation, cancelReservation }: BikeRe
   return (
     <div className="relative block border border-gray-100" key={reservation.id}>
       <img
-        src="https://images.unsplash.com/photo-1456948927036-ad533e53865c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
+        src={reservation.bike.image || "/default.jpg"}
         className="object-contain w-full"
       />
 

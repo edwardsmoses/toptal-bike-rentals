@@ -22,7 +22,7 @@ export const useAuthUser = () => {
   };
 
   const redirectUserToRoute = (userRole: UserRole) => {
-    if (userRole !== currentRoute) {
+    if (roleRoutes[userRole] !== currentRoute) {
       return router.replace(`/${roleRoutes[userRole]}`);
     }
   };

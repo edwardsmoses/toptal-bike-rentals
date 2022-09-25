@@ -21,10 +21,11 @@ export interface Bike {
   ratings: Record<string, number>;
   isAvailableForRental: boolean;
   reservationDates?: Record<string, [Timestamp, Timestamp]>;
-  addedOn: string;
+  addedOn: Timestamp;
   addedBy: string;
-  updatedOn?: string;
+  updatedOn?: Timestamp;
   updatedBy?: string;
+  image?: string;
 }
 
 export interface BikeReservation {
