@@ -4,7 +4,7 @@ import { auth } from "firebase-app/init";
 import { useAppDispatch } from "store/store";
 import { startAppDataLoad } from "store/thunks/listenerThunk";
 import { map } from "lodash";
-import { User, UserRole } from "models/model";
+import { UserRole } from "models/model";
 import { useRouter } from "next/router";
 
 export const useAuthUser = () => {

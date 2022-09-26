@@ -5,7 +5,7 @@ import { sortEntitiesByDate } from "constants/sortByDate";
 import { Breadcrumb, Table } from "flowbite-react";
 import { isEmpty, map } from "lodash";
 import { useRouter } from "next/router";
-import { selectBikeReservations, selectUserReservations } from "store/features/bikesSlice";
+import { selectUserReservations } from "store/features/bikesSlice";
 import { selectUser } from "store/features/usersSlice";
 import { useAppSelector } from "store/store";
 

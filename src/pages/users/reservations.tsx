@@ -5,9 +5,9 @@ import { formatDateInRelativeFormat } from "constants/date";
 import { sortEntitiesByDate } from "constants/sortByDate";
 import { isPast } from "date-fns";
 import { firestore } from "firebase-app/init";
-import { deleteDoc, deleteField, doc, FieldValue, runTransaction, updateDoc } from "firebase/firestore";
+import { deleteDoc, deleteField, doc, runTransaction, updateDoc } from "firebase/firestore";
 import { Button, Modal, Rating, Spinner } from "flowbite-react";
-import { find, isEmpty, map, range, size } from "lodash";
+import { find, isEmpty, map, range } from "lodash";
 import { useState } from "react";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
@@ -24,19 +24,19 @@ type BikeReservationProp = {
 const Reservation = ({ reservation, rateReservation, cancelReservation }: BikeReservationProp) => {
   return (
     <div className="relative block border-2 border-gray-100" key={reservation.id}>
-      <img src={reservation.bike.image || "/default.jpg"} className="object-cover w-full mb-3 shadow-lg h-32" />
+      <img src={reservation.bike.image || "/default.jpg"} className="object-cover w-full h-32 mb-3 shadow-lg" />
 
-      <p className="absolute px-2 top-3 left-1 text-xs bg-gray-100 rounded-sm">
+      <p className="absolute px-2 text-xs bg-gray-100 rounded-sm top-3 left-1">
         created on: {formatDateInRelativeFormat(reservation.addedOn)}
       </p>
 
-      <div className="flex flex-col space-y-1 absolute right-1 top-3 content-end">
+      <div className="absolute flex flex-col content-end space-y-1 right-1 top-3">
         {!reservation.rating ? (
           <Button type="button" size="xs" color="light" onClick={rateReservation}>
             Rate Bike
           </Button>
         ) : (
-          <div className="w-full content-end">
+          <div className="content-end w-full">
             <Rating>
               {map(range(0, reservation.rating), () => {
                 return <Rating.Star />;

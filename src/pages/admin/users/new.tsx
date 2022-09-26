@@ -3,7 +3,7 @@ import { UserLayout } from "components/layout/UserLayout";
 import { Label, TextInput, Button, Spinner, Select, Breadcrumb } from "flowbite-react";
 import { useRouter } from "next/router";
 import { FormEvent, useEffect, useState } from "react";
-import { addDoc, collection, doc, setDoc, Timestamp, updateDoc } from "firebase/firestore";
+import { doc, setDoc, Timestamp, updateDoc } from "firebase/firestore";
 import { auth, firestore } from "firebase-app/init";
 import { USERS_COLLECTION } from "constants/collection";
 import { toast } from "react-hot-toast";

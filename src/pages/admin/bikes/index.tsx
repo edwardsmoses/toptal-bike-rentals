@@ -6,7 +6,7 @@ import { calculateBikeRating } from "constants/ratings";
 import { sortEntitiesByDate } from "constants/sortByDate";
 import { firestore } from "firebase-app/init";
 import { deleteDoc, doc } from "firebase/firestore";
-import { Button, Card, Dropdown, Rating } from "flowbite-react";
+import { Button, Dropdown, Rating } from "flowbite-react";
 import { isEmpty, map, size } from "lodash";
 import { Bike } from "models/model";
 import Link from "next/link";

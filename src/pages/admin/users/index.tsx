@@ -6,7 +6,7 @@ import { sortEntitiesByDate } from "constants/sortByDate";
 import { auth, firestore } from "firebase-app/init";
 import { deleteDoc, doc } from "firebase/firestore";
 import { Button, Dropdown, Table } from "flowbite-react";
-import { capitalize, first, map, size, words } from "lodash";
+import { capitalize, map, size } from "lodash";
 import { User } from "models/model";
 import Link from "next/link";
 import { useRouter } from "next/router";
