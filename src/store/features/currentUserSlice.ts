@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Timestamp } from "firebase/firestore";
 import { User } from "models/model";
-import { RootState } from "store/store";
 
 interface CurrentUserSlice {
   user: User;
@@ -11,6 +11,7 @@ const initialState: CurrentUserSlice = {
     email: "",
     fullName: "",
     id: "",
+    addedOn: Timestamp.now(),
   },
 };
 

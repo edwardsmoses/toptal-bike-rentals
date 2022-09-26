@@ -82,7 +82,7 @@ const Reservation = ({ reservation, rateReservation, cancelReservation }: BikeRe
         </h5>
         <span className="text-sm"></span>
 
-        <p className="text-xs text-gray-700">created on: {formatDateInRelativeFormat(reservation.reservedOn)}</p>
+        <p className="text-xs text-gray-700">created on: {formatDateInRelativeFormat(reservation.addedOn)}</p>
       </div>
     </div>
   );

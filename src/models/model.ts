@@ -2,18 +2,21 @@ import { Timestamp } from "firebase/firestore";
 
 export type UserRole = "manager" | "user";
 
-export interface User {
-  id: string;
-  fullName: string;
-  email: string;
-  role?: UserRole;
-  addedOn?: Timestamp;
+export interface Entity {
+  addedOn: Timestamp;
   addedBy?: string;
   updatedOn?: Timestamp;
   updatedBy?: string;
 }
 
-export interface Bike {
+export interface User extends Entity  {
+  id: string;
+  fullName: string;
+  email: string;
+  role?: UserRole;
+}
+
+export interface Bike extends Entity {
   id: string;
   model: string;
   color: string;
@@ -21,19 +24,13 @@ export interface Bike {
   ratings: Record<string, number>;
   isAvailableForRental: boolean;
   reservationDates?: Record<string, [Timestamp, Timestamp]>;
-  addedOn: Timestamp;
-  addedBy: string;
-  updatedOn?: Timestamp;
-  updatedBy?: string;
   image?: string;
 }
 
-export interface BikeReservation {
+export interface BikeReservation extends Entity {
   id: string;
   bikeId: string;
   startDate: Timestamp;
   endDate: Timestamp;
   rating?: number;
-  reservedBy: string;
-  reservedOn: Timestamp;
 }

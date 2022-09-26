@@ -183,7 +183,7 @@ export const selectAllReservations = (state: RootState): AdminBikeReservationSel
 
   map(reservations, (reservation) => {
     const bike = find(state.bikes.allBikes, (bike) => bike.id === reservation.bikeId);
-    const user = find(state.allUsers.allUsers, (user) => user.id === reservation.reservedBy);
+    const user = find(state.allUsers.allUsers, (user) => user.id === reservation.addedBy);
 
     if (bike && user) {
       response.push({
@@ -204,7 +204,7 @@ export const selectBikeReservations = (state: RootState, bikeId: string): AdminB
 
 export const selectUserReservations = (state: RootState, userId: string): AdminBikeReservationSelectorResponse[] => {
   const reservations = selectAllReservations(state);
-  return filter(reservations, (reservation) => reservation.reservedBy === userId);
+  return filter(reservations, (reservation) => reservation.addedBy === userId);
 };
 
 export { bikesActions, bikesReducer };

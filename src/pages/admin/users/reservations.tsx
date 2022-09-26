@@ -52,7 +52,7 @@ const UserReservations = () => {
                       {formatDateInRelativeFormat(reservation.startDate)} -{" "}
                       {formatDateInRelativeFormat(reservation.endDate)}
                     </Table.Cell>
-                    <Table.Cell>{formatDateInRelativeFormat(reservation.reservedOn)}</Table.Cell>
+                    <Table.Cell>{formatDateInRelativeFormat(reservation.addedOn)}</Table.Cell>
                   </Table.Row>
                 );
               })}
