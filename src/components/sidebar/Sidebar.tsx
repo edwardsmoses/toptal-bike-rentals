@@ -41,11 +41,9 @@ export const Sidebar = () => {
       <div className="sticky inset-x-0 bottom-0 border-t border-gray-100">
         <a className="flex items-center p-4 bg-white hover:bg-gray-50 shrink-0">
           <Avatar rounded={true} />
-
           <div className="ml-1.5">
-            <p className="text-xs">
+            <p className="mr-10 text-xs">
               <strong className="block font-medium">{currentUser.fullName}</strong>
-              <span className="mr-10"> {currentUser.email} </span>
             </p>
           </div>
         </a>
