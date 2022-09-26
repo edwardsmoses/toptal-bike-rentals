@@ -37,7 +37,10 @@ const BikeCard = ({ bike }: BikeCardProp) => {
         <img className="object-cover w-full mb-3 shadow-lg h-28" src={bike.image || "/default.jpg"} />
 
         <div className="absolute flex flex-col items-end space-y-2 top-3 right-5 left">
-          <span className="ml-3 inline-flex items-center justify-center rounded bg-gray-200 px-2 py-0.5 text-xs font-medium text-gray-500 dark:bg-gray-700 dark:text-gray-400">
+          <span
+            className={`ml-3 inline-flex items-center justify-center rounded px-2 py-0.5 text-xs font-medium text-white 
+            ${bike.isAvailableForRental ? "bg-green-500" : "bg-red-500"}`}
+          >
             {bike.isAvailableForRental ? "Is Available For Rent" : "Not available for Rent"}
           </span>
           <Dropdown label="Actions" size="xs">

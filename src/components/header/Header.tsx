@@ -1,12 +1,14 @@
 import { auth } from "firebase-app/init";
 import { Avatar, Dropdown } from "flowbite-react";
 import { first, words } from "lodash";
+import { useRouter } from "next/router";
 import { currentUserActions } from "store/features/currentUserSlice";
 import { useAppDispatch, useAppSelector } from "store/store";
 import { FilterMenu } from "./FilterMenu";
 
 export const Header = () => {
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const currentUser = useAppSelector((state) => state.currentUser.user);
 
   return (
@@ -34,8 +36,8 @@ export const Header = () => {
               }
             >
               <Dropdown.Item
-                onClick={() => {
-                  auth.signOut();
+                onClick={async () => {
+                  await auth.signOut();
                   dispatch(currentUserActions.resetCurrentUser());
                 }}
               >
