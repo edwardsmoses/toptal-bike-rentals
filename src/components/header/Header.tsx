@@ -12,13 +12,13 @@ export const Header = () => {
   return (
     <header className="w-full bg-gray-50">
       <div className="max-w-screen-xl px-4 py-8 mx-auto sm:px-6 lg:px-8">
-        <div className="flex items-center sm:justify-between sm:gap-4">
+        <div className="flex items-center justify-between w-full gap-4">
           <div className="relative">
             {/* Only Display the Filter menu for 'User' role */}
             {currentUser.role === "user" && <FilterMenu />}
           </div>
 
-          <div className="flex items-center justify-between flex-1 gap-8 sm:justify-end">
+          <div className="flex items-center justify-between gap-8 sm:justify-end">
             <Dropdown
               inline={true}
               placement="bottom-end"

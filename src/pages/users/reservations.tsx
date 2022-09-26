@@ -168,7 +168,7 @@ const Reservations = () => {
             />
           )}
 
-          <div className="grid grid-cols-3 mt-8 gap-x-4 gap-y-8">
+          <div className="grid grid-cols-1 mt-8 lg:grid-cols-3 gap-x-4 gap-y-8">
             {map(reservations, (reservation) => {
               return (
                 <Reservation
