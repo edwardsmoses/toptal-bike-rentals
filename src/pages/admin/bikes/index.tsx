@@ -150,7 +150,7 @@ const Bikes = () => {
           />
         )}
 
-        <div className="grid grid-cols-3 py-5 mt-8 gap-x-3 gap-y-8">
+        <div className="grid grid-cols-1 py-5 mt-8 lg:grid-cols-3 gap-x-3 gap-y-8">
           {map(allBikes, (bike) => {
             return <BikeCard key={bike.id} bike={bike} />;
           })}
