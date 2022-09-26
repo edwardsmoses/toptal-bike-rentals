@@ -33,10 +33,16 @@ const Reservation = ({ reservation, rateReservation, cancelReservation }: BikeRe
         </p>
 
         <div className="flex flex-col space-y-1">
-          {!reservation.rating && (
+          {!reservation.rating ? (
             <Button type="button" size="xs" color="light" onClick={rateReservation}>
               Rate Bike
             </Button>
+          ) : (
+            <Rating>
+              {map(range(0, reservation.rating), () => {
+                return <Rating.Star />;
+              })}
+            </Rating>
           )}
 
           {/* Prevent cancelling reservations that have started already */}
@@ -181,6 +187,7 @@ const Reservations = () => {
       <Modal
         show={!!rateReservationId}
         onClose={() => {
+          setBikeRating(0);
           setRateReservationId("");
         }}
         popup={true}
