@@ -50,7 +50,11 @@ const Dashboard = () => {
                     }}
                   >
                     <div className="relative p-8 pt-40 text-white bg-black bg-opacity-40">
-                      <strong className="absolute top-4 left-0 bg-red-600 py-1.5 px-3 text-xs uppercase tracking-wider text-white">
+                      <strong
+                        className={`absolute top-4 left-0 py-1.5 px-3 text-xs uppercase tracking-wider text-white ${
+                          bike.isAvailableForRental ? "bg-green-600" : "bg-red-600"
+                        }`}
+                      >
                         {bike.isAvailableForRental ? "Available" : "Not available"}
                       </strong>
 
