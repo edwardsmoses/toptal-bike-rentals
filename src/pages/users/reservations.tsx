@@ -22,8 +22,8 @@ type BikeReservationProp = {
 };
 const Reservation = ({ reservation, rateReservation, cancelReservation }: BikeReservationProp) => {
   return (
-    <div className="relative block border border-gray-100" key={reservation.id}>
-      <img src={reservation.bike.image || "/default.jpg"} className="object-contain w-full" />
+    <div className="relative block border-2 border-gray-100" key={reservation.id}>
+      <img src={reservation.bike.image || "/default.jpg"} className="object-cover w-full mb-3 shadow-lg h-44" />
 
       <div className="absolute flex justify-between top-3 left-1 right-1">
         <p className="flex flex-col px-4 py-2 text-xs bg-gray-100 rounded-sm">
@@ -72,7 +72,7 @@ const Reservation = ({ reservation, rateReservation, cancelReservation }: BikeRe
 
       <div className="px-6 py-2 space-y-1">
         <h5 className="text-lg font-bold">
-          {reservation.bike.location}, {reservation.bike.model}
+          {reservation.bike.model}, {reservation.bike.location} <small>{reservation.bike.color}</small>
         </h5>
         <span className="text-sm"></span>
 
