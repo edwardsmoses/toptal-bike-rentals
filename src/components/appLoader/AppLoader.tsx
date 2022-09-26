@@ -13,7 +13,7 @@ export const AppLoader = ({ children }: AppLoaderProps) => {
 
   if (typeof window === "undefined" || loading) {
     return (
-      <div className="flex w-screen h-screen">
+      <div className="flex lg:w-screen lg:h-screen">
         <div className="m-auto">
           <Spinner size="xl" />
         </div>

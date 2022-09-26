@@ -14,7 +14,7 @@ export const Sidebar = () => {
   const currentRoute = `/${router.pathname.split("/")[1]}/${router.pathname.split("/")[2] || ""}`;
 
   return (
-    <div className="flex flex-col justify-between min-h-screen bg-white border-r w-fit">
+    <div className="flex flex-col justify-between w-full bg-white border-r md:min-h-screen lg:w-fit">
       <div className="flex flex-col">
         <span className="w-full py-5 mx-auto font-bold text-center bg-gray-200 rounded-lg text-md">BikeRentals</span>
 
