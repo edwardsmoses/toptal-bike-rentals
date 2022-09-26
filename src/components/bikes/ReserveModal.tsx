@@ -13,7 +13,7 @@ import { BIKES_COLLECTION, RESERVATIONS_COLLECTION } from "constants/collection"
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 import { calculateBikeRating } from "constants/ratings";
-import { isWithinInterval } from "date-fns";
+import { isWithinInterval, areIntervalsOverlapping } from "date-fns";
 
 export const ReserveBikeModal = () => {
   const router = useRouter();
@@ -46,8 +46,8 @@ export const ReserveBikeModal = () => {
           bikeId: selectedBike?.id,
           startDate: reservationDate.startDate,
           endDate: reservationDate.endDate,
-          reservedBy: currentUser.id,
-          reservedOn: Timestamp.now(),
+          addedBy: currentUser.id,
+          addedOn: Timestamp.now(),
         });
       });
 
@@ -68,7 +68,7 @@ export const ReserveBikeModal = () => {
   }
 
   return (
-    <Modal show={!!selectedBike} onClose={onClose} popup={true} size="5xl">
+    <Modal show={!!(selectedBike && selectedBike.isAvailableForRental)} onClose={onClose} popup={true} size="5xl">
       <Modal.Header />
 
       <Modal.Body>
@@ -128,7 +128,7 @@ export const ReserveBikeModal = () => {
 
                         <DateRange
                           minDate={new Date()}
-                          //disable days if it falls between any reservations for the bike... 
+                          //disable days if it falls between any reservations for the bike...
                           disabledDay={(date) =>
                             some(values(selectedBike.reservationDates), (reserved) =>
                               isWithinInterval(new Date(date), {
@@ -140,6 +140,26 @@ export const ReserveBikeModal = () => {
                           moveRangeOnFirstSelection={false}
                           editableDateInputs={true}
                           onChange={(item: any) => {
+                            const isDateNotAvailable = some(values(selectedBike.reservationDates), (reserved) =>
+                              areIntervalsOverlapping(
+                                {
+                                  start: new Date(item.selection.startDate),
+                                  end: new Date(item.selection.endDate),
+                                },
+                                {
+                                  start: new Date(reserved[0].seconds * 1000),
+                                  end: new Date(reserved[1].seconds * 1000),
+                                }
+                              )
+                            );
+
+                            if (isDateNotAvailable) {
+                              toast.error(
+                                "The dates you've selected contains days that the Bike has been reserved for already"
+                              );
+                              return;
+                            }
+
                             dispatch(
                               bikesActions.setReserveBikeState({
                                 reservationDate: item.selection,

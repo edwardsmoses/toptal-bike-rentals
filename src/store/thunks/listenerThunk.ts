@@ -66,7 +66,7 @@ const getAllReservations = (dispatch: Function) => {
 };
 
 const getCurrentUserReservations = (currentUserId: string, dispatch: Function) => {
-  const q = query(collection(firestore, RESERVATIONS_COLLECTION), where("reservedBy", "==", currentUserId));
+  const q = query(collection(firestore, RESERVATIONS_COLLECTION), where("addedBy", "==", currentUserId));
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
     const reservations: BikeReservation[] = [];
     querySnapshot.forEach((doc) => {

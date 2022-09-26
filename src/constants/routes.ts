@@ -23,7 +23,7 @@ const ADMIN_SIDEBAR_ROUTES: SidebarRouteType[] = [
 const USER_SIDEBAR_ROUTES: SidebarRouteType[] = [
   {
     route: "/users/",
-    routeLabel: "Dashboard",
+    routeLabel: "All Bikes",
   },
   {
     route: "/users/reservations",

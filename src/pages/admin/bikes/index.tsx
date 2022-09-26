@@ -34,15 +34,12 @@ const BikeCard = ({ bike }: BikeCardProp) => {
   return (
     <div className="relative flex items-stretch" key={bike.id}>
       <div className="relative flex flex-col items-stretch w-full bg-white border border-gray-200 rounded-lg shadow-md dark:border-gray-700 dark:bg-gray-800">
-        <img className="object-cover w-full mb-3 shadow-lg h-44" src={bike.image || "/default.jpg"} />
+        <img className="object-cover w-full mb-3 shadow-lg h-28" src={bike.image || "/default.jpg"} />
 
         <div className="absolute flex flex-col items-end space-y-2 top-3 right-5 left">
-          {bike.isAvailableForRental && (
-            <span className="ml-3 inline-flex items-center justify-center rounded bg-gray-200 px-2 py-0.5 text-xs font-medium text-gray-500 dark:bg-gray-700 dark:text-gray-400">
-              Is Available For Rent
-            </span>
-          )}
-
+          <span className="ml-3 inline-flex items-center justify-center rounded bg-gray-200 px-2 py-0.5 text-xs font-medium text-gray-500 dark:bg-gray-700 dark:text-gray-400">
+            {bike.isAvailableForRental ? "Is Available For Rent" : "Not available for Rent"}
+          </span>
           <Dropdown label="Actions" size="xs">
             <Dropdown.Item
               onClick={() => {
@@ -130,7 +127,7 @@ const BikeCard = ({ bike }: BikeCardProp) => {
 };
 
 const Bikes = () => {
-  const allBikes = useAppSelector((state) => state.bikes.allBikes);
+  const bikes = useAppSelector((state) => state.bikes.allBikes);
 
   return (
     <UserLayout>
@@ -142,7 +139,7 @@ const Bikes = () => {
           </Link>
         </div>
 
-        {isEmpty(allBikes) && (
+        {isEmpty(bikes) && (
           <EmptyState
             title="There's nothing here"
             message="Bikes created would appear here, try adding one"
@@ -151,8 +148,8 @@ const Bikes = () => {
           />
         )}
 
-        <div className="grid grid-cols-1 py-5 mt-8 lg:grid-cols-3 gap-x-3 gap-y-8">
-          {map(sortEntitiesByDate(allBikes), (bike) => {
+        <div className="grid grid-cols-1 py-5 mt-8 lg:grid-cols-4 gap-x-3 gap-y-8">
+          {map(sortEntitiesByDate(bikes), (bike) => {
             return <BikeCard key={bike.id} bike={bike} />;
           })}
         </div>

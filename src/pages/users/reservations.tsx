@@ -7,7 +7,7 @@ import { isPast } from "date-fns";
 import { firestore } from "firebase-app/init";
 import { deleteDoc, deleteField, doc, FieldValue, runTransaction, updateDoc } from "firebase/firestore";
 import { Button, Modal, Rating, Spinner } from "flowbite-react";
-import { find, isEmpty, map, range } from "lodash";
+import { find, isEmpty, map, range, size } from "lodash";
 import { useState } from "react";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
@@ -24,66 +24,68 @@ type BikeReservationProp = {
 const Reservation = ({ reservation, rateReservation, cancelReservation }: BikeReservationProp) => {
   return (
     <div className="relative block border-2 border-gray-100" key={reservation.id}>
-      <img src={reservation.bike.image || "/default.jpg"} className="object-cover w-full mb-3 shadow-lg h-44" />
+      <img src={reservation.bike.image || "/default.jpg"} className="object-cover w-full mb-3 shadow-lg h-32" />
 
-      <div className="absolute flex justify-between top-3 left-1 right-1">
-        <p className="flex flex-col px-4 py-2 text-xs bg-gray-100 rounded-sm">
-          <span>Reservation Date:</span>
-          <span>{formatDateInRelativeFormat(reservation.startDate)} -</span>
-          <span>{formatDateInRelativeFormat(reservation.endDate || reservation.startDate)} -</span>
-        </p>
+      <p className="absolute px-2 top-3 left-1 text-xs bg-gray-100 rounded-sm">
+        created on: {formatDateInRelativeFormat(reservation.addedOn)}
+      </p>
 
-        <div className="flex flex-col space-y-1">
-          {!reservation.rating ? (
-            <Button type="button" size="xs" color="light" onClick={rateReservation}>
-              Rate Bike
-            </Button>
-          ) : (
+      <div className="flex flex-col space-y-1 absolute right-1 top-3 content-end">
+        {!reservation.rating ? (
+          <Button type="button" size="xs" color="light" onClick={rateReservation}>
+            Rate Bike
+          </Button>
+        ) : (
+          <div className="w-full content-end">
             <Rating>
               {map(range(0, reservation.rating), () => {
                 return <Rating.Star />;
               })}
             </Rating>
-          )}
+          </div>
+        )}
 
-          {/* Prevent cancelling reservations that have started already */}
-          {!isPast(new Date(reservation.startDate.seconds * 1000)) && (
-            <Button
-              type="button"
-              size="xs"
-              color="failure"
-              onClick={() => {
-                confirmAlert({
-                  title: "Cancel Reservation",
-                  message: "Are you sure you want to cancel your Reservation? You can't undo this action.",
-                  buttons: [
-                    {
-                      label: "Yes, Proceed",
-                      onClick: () => {
-                        cancelReservation(reservation.id);
-                      },
+        {/* Prevent cancelling reservations that have started already */}
+        {!isPast(new Date(reservation.startDate.seconds * 1000)) && (
+          <Button
+            type="button"
+            size="xs"
+            color="failure"
+            onClick={() => {
+              confirmAlert({
+                title: "Cancel Reservation",
+                message: "Are you sure you want to cancel your Reservation? You can't undo this action.",
+                buttons: [
+                  {
+                    label: "Yes, Proceed",
+                    onClick: () => {
+                      cancelReservation(reservation.id);
                     },
-                    {
-                      label: "No",
-                      onClick: () => {},
-                    },
-                  ],
-                });
-              }}
-            >
-              Cancel Reservation
-            </Button>
-          )}
-        </div>
+                  },
+                  {
+                    label: "No",
+                    onClick: () => {},
+                  },
+                ],
+              });
+            }}
+          >
+            Cancel Reservation
+          </Button>
+        )}
       </div>
 
-      <div className="px-6 py-2 space-y-1">
+      <div className="px-6 py-2">
         <h5 className="text-lg font-bold">
           {reservation.bike.model}, {reservation.bike.location} <small>{reservation.bike.color}</small>
         </h5>
-        <span className="text-sm"></span>
-
-        <p className="text-xs text-gray-700">created on: {formatDateInRelativeFormat(reservation.addedOn)}</p>
+        <p className="text-xs text-gray-700">
+          <span>Reservation Date:- </span>
+          <b>
+            {formatDateInRelativeFormat(reservation.startDate)} to{" "}
+            {formatDateInRelativeFormat(reservation.endDate || reservation.startDate)}
+          </b>
+        </p>
       </div>
     </div>
   );
@@ -145,6 +147,8 @@ const Reservations = () => {
         rating: bikeRating,
       });
       setRateReservationId("");
+      setBikeRating(0);
+
       toast.success("Thanks for the rating!");
     } catch (error) {
       console.log(error);

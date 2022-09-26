@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { calculateBikeRating } from "constants/ratings";
-import { isWithinInterval } from "date-fns";
+import { areIntervalsOverlapping, isWithinInterval } from "date-fns";
 import { filter, find, includes, isEmpty, lowerCase, map, some, uniq, values } from "lodash";
 import { User, Bike, BikeReservation } from "models/model";
 import { RootState } from "store/store";
@@ -105,7 +105,7 @@ export const selectFilterBikeOptions = (state: RootState) => {
 export const selectBikesForRental = (state: RootState) => {
   const { color, location, model, rating, startDate, endDate } = state.bikes.filterBikes;
 
-  let bikesAvailableForRental = filter(state.bikes.allBikes, (bike) => bike.isAvailableForRental);
+  let bikesAvailableForRental = state.bikes.allBikes;
 
   if (color) {
     bikesAvailableForRental = filter(bikesAvailableForRental, (bike) => lowerCase(bike.color) === lowerCase(color));
@@ -130,28 +130,21 @@ export const selectBikesForRental = (state: RootState) => {
 
   if (startDate && endDate) {
     bikesAvailableForRental = filter(bikesAvailableForRental, (bike) => {
-      //check if the start date lies within any reserved dates for the bike
-      //if it does, it isn't available
-      const isStartDateUnavailable = some(values(bike.reservationDates), (reserved) =>
-        isWithinInterval(new Date(startDate), {
-          start: new Date(reserved[0].seconds * 1000),
-          end: new Date(reserved[1].seconds * 1000),
-        })
+      const isDateUnavailable = some(values(bike.reservationDates), (reserved) =>
+        areIntervalsOverlapping(
+          {
+            start: new Date(startDate),
+            end: new Date(endDate),
+          },
+          {
+            start: new Date(reserved[0].seconds * 1000),
+            end: new Date(reserved[1].seconds * 1000),
+          }
+        )
       );
 
-      //check if the end date lies within any reserved dates for the bike..
-      //if it does, it isn't available
-      const isEndDateUnavailable = some(values(bike.reservationDates), (reserved) =>
-        isWithinInterval(new Date(endDate), {
-          start: new Date(reserved[0].seconds * 1000),
-          end: new Date(reserved[1].seconds * 1000),
-        })
-      );
-
-      console.log(!isStartDateUnavailable && !isEndDateUnavailable);
-
-      //if start date and end date is available, yes, the bike is available
-      return !isStartDateUnavailable && !isEndDateUnavailable;
+      //if date doesn't overlap with any reserved dates for the bike, yes, the bike is available
+      return !isDateUnavailable;
     });
   }
 
