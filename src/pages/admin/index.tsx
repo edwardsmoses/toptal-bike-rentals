@@ -9,7 +9,7 @@ const Dashboard = () => {
 
   return (
     <UserLayout>
-      <div className="grid grid-cols-4 py-10 mx-auto space-x-8">
+      <div className="grid grid-cols-1 py-10 space-y-3 lg:mx-auto lg:space-y-0 lg:space-x-8 lg:grid-cols-4">
         <article className="flex flex-col gap-4 p-6 bg-white border border-gray-100 rounded-lg">
           <div>
             <p className="flex flex-row justify-between">
