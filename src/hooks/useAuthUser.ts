@@ -31,7 +31,7 @@ export const useAuthUser = () => {
     let dataListeners: Array<Function> = [];
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const listeners = (await dispatch(
+        dispatch(
           startAppDataLoad(
             () => {
               setLoading(true);
@@ -40,12 +40,14 @@ export const useAuthUser = () => {
               await redirectUserToRoute(userRole);
               setTimeout(() => {
                 setLoading(false);
-              }, 1000);
+              }, 500);
+            },
+            (listeners) => {
+              dataListeners = listeners;
             }
           )
-        )) as any;
+        );
 
-        dataListeners = listeners;
         setUser(user);
       } else {
         setUser(null);

@@ -9,7 +9,8 @@ import { AppThunk } from "store/store";
 
 export const startAppDataLoad = (
   onLoadStartCallback: () => void,
-  onLoadUserCompleteCallback: (userRole: UserRole) => void
+  onLoadUserCompleteCallback: (userRole: UserRole) => void,
+  onListenersComplete: (listeners: Array<any>) => void
 ): AppThunk<void> => {
   return async (dispatch) => {
     const listeners = [];
@@ -30,7 +31,7 @@ export const startAppDataLoad = (
 
     listeners.push(getAllBikes(dispatch));
 
-    return listeners;
+    onListenersComplete(listeners);
   };
 };
 
