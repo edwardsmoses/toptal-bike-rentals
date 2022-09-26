@@ -2,6 +2,7 @@ import { EmptyState } from "components/empty/EmptyState";
 import { UserLayout } from "components/layout/UserLayout";
 import { BIKES_COLLECTION, RESERVATIONS_COLLECTION } from "constants/collection";
 import { formatDateInRelativeFormat } from "constants/date";
+import { sortEntitiesByDate } from "constants/sortByDate";
 import { isPast } from "date-fns";
 import { firestore } from "firebase-app/init";
 import { deleteDoc, deleteField, doc, FieldValue, runTransaction, updateDoc } from "firebase/firestore";
@@ -169,7 +170,7 @@ const Reservations = () => {
           )}
 
           <div className="grid grid-cols-1 mt-8 lg:grid-cols-3 gap-x-4 gap-y-8">
-            {map(reservations, (reservation) => {
+            {map(sortEntitiesByDate(reservations), (reservation) => {
               return (
                 <Reservation
                   reservation={reservation}

@@ -1,6 +1,7 @@
 import { EmptyState } from "components/empty/EmptyState";
 import { UserLayout } from "components/layout/UserLayout";
 import { formatDateInRelativeFormat } from "constants/date";
+import { sortEntitiesByDate } from "constants/sortByDate";
 import { Breadcrumb, Table } from "flowbite-react";
 import { isEmpty, map } from "lodash";
 import { useRouter } from "next/router";
@@ -39,7 +40,7 @@ const BikeReservations = () => {
               <Table.HeadCell>Created on</Table.HeadCell>
             </Table.Head>
             <Table.Body className="divide-y">
-              {map(bikesReservations, (reservation) => {
+              {map(sortEntitiesByDate(bikesReservations), (reservation) => {
                 return (
                   <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800" key={reservation.id}>
                     <Table.Cell className="font-medium text-gray-900 whitespace-nowrap dark:text-white">

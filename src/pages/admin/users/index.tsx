@@ -2,6 +2,7 @@ import axios from "axios";
 import { UserLayout } from "components/layout/UserLayout";
 import { USERS_COLLECTION } from "constants/collection";
 import { formatDateInRelativeFormat } from "constants/date";
+import { sortEntitiesByDate } from "constants/sortByDate";
 import { auth, firestore } from "firebase-app/init";
 import { deleteDoc, doc } from "firebase/firestore";
 import { Button, Dropdown, Table } from "flowbite-react";
@@ -158,7 +159,7 @@ const AllUsers = () => {
             </Table.HeadCell>
           </Table.Head>
           <Table.Body className="divide-y">
-            {map(allUsers, (user) => {
+            {map(sortEntitiesByDate(allUsers), (user) => {
               return <UserRow user={user} key={user.id} />;
             })}
           </Table.Body>

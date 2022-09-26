@@ -3,6 +3,7 @@ import { UserLayout } from "components/layout/UserLayout";
 import { BIKES_COLLECTION } from "constants/collection";
 import { formatDateInRelativeFormat } from "constants/date";
 import { calculateBikeRating } from "constants/ratings";
+import { sortEntitiesByDate } from "constants/sortByDate";
 import { firestore } from "firebase-app/init";
 import { deleteDoc, doc } from "firebase/firestore";
 import { Button, Card, Dropdown, Rating } from "flowbite-react";
@@ -151,7 +152,7 @@ const Bikes = () => {
         )}
 
         <div className="grid grid-cols-1 py-5 mt-8 lg:grid-cols-3 gap-x-3 gap-y-8">
-          {map(allBikes, (bike) => {
+          {map(sortEntitiesByDate(allBikes), (bike) => {
             return <BikeCard key={bike.id} bike={bike} />;
           })}
         </div>

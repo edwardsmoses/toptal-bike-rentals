@@ -2,6 +2,7 @@ import { ReserveBikeModal } from "components/bikes/ReserveModal";
 import { EmptyState } from "components/empty/EmptyState";
 import { UserLayout } from "components/layout/UserLayout";
 import { calculateBikeRating } from "constants/ratings";
+import { sortEntitiesByDate } from "constants/sortByDate";
 import { isEmpty, map } from "lodash";
 import { bikesActions, selectBikesForRental } from "store/features/bikesSlice";
 import { useAppDispatch, useAppSelector } from "store/store";
@@ -28,7 +29,7 @@ const Dashboard = () => {
           )}
 
           <div className="grid grid-cols-1 mt-8 lg:grid-cols-3 gap-x-4 gap-y-8">
-            {map(allBikes, (bike) => {
+            {map(sortEntitiesByDate(allBikes), (bike) => {
               return (
                 <div
                   className="flex items-stretch cursor-pointer"
