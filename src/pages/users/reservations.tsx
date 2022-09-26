@@ -2,6 +2,7 @@ import { EmptyState } from "components/empty/EmptyState";
 import { UserLayout } from "components/layout/UserLayout";
 import { BIKES_COLLECTION, RESERVATIONS_COLLECTION } from "constants/collection";
 import { formatDateInRelativeFormat } from "constants/date";
+import { isPast } from "date-fns";
 import { firestore } from "firebase-app/init";
 import { deleteDoc, deleteField, doc, FieldValue, runTransaction, updateDoc } from "firebase/firestore";
 import { Button, Modal, Rating, Spinner } from "flowbite-react";
@@ -22,10 +23,7 @@ type BikeReservationProp = {
 const Reservation = ({ reservation, rateReservation, cancelReservation }: BikeReservationProp) => {
   return (
     <div className="relative block border border-gray-100" key={reservation.id}>
-      <img
-        src={reservation.bike.image || "/default.jpg"}
-        className="object-contain w-full"
-      />
+      <img src={reservation.bike.image || "/default.jpg"} className="object-contain w-full" />
 
       <div className="absolute flex justify-between top-3 left-1 right-1">
         <p className="flex flex-col px-4 py-2 text-xs bg-gray-100 rounded-sm">
@@ -41,31 +39,34 @@ const Reservation = ({ reservation, rateReservation, cancelReservation }: BikeRe
             </Button>
           )}
 
-          <Button
-            type="button"
-            size="xs"
-            color="failure"
-            onClick={() => {
-              confirmAlert({
-                title: "Cancel Reservation",
-                message: "Are you sure you want to cancel your Reservation? You can't undo this action.",
-                buttons: [
-                  {
-                    label: "Yes, Proceed",
-                    onClick: () => {
-                      cancelReservation(reservation.id);
+          {/* Prevent cancelling reservations that have started already */}
+          {!isPast(new Date(reservation.startDate.seconds * 1000)) && (
+            <Button
+              type="button"
+              size="xs"
+              color="failure"
+              onClick={() => {
+                confirmAlert({
+                  title: "Cancel Reservation",
+                  message: "Are you sure you want to cancel your Reservation? You can't undo this action.",
+                  buttons: [
+                    {
+                      label: "Yes, Proceed",
+                      onClick: () => {
+                        cancelReservation(reservation.id);
+                      },
                     },
-                  },
-                  {
-                    label: "No",
-                    onClick: () => {},
-                  },
-                ],
-              });
-            }}
-          >
-            Cancel Reservation
-          </Button>
+                    {
+                      label: "No",
+                      onClick: () => {},
+                    },
+                  ],
+                });
+              }}
+            >
+              Cancel Reservation
+            </Button>
+          )}
         </div>
       </div>
 
