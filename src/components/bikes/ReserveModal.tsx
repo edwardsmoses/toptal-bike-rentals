@@ -1,5 +1,5 @@
 import { Button, Modal, Rating, Spinner } from "flowbite-react";
-import { map, range } from "lodash";
+import { map, range, size, some, values } from "lodash";
 import { bikesActions } from "store/features/bikesSlice";
 import { useAppDispatch, useAppSelector } from "store/store";
 
@@ -13,6 +13,7 @@ import { BIKES_COLLECTION, RESERVATIONS_COLLECTION } from "constants/collection"
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 import { calculateBikeRating } from "constants/ratings";
+import { isWithinInterval } from "date-fns";
 
 export const ReserveBikeModal = () => {
   const router = useRouter();
@@ -94,7 +95,9 @@ export const ReserveBikeModal = () => {
                             return <Rating.Star />;
                           })}
                           <p className="ml-2 text-sm font-bold text-gray-900 dark:text-white">
-                            {calculateBikeRating(selectedBike.ratings)}
+                            {size(values(selectedBike.ratings))
+                              ? calculateBikeRating(selectedBike.ratings)
+                              : "No ratings yet"}
                           </p>
                         </Rating>
                       </div>
@@ -125,6 +128,15 @@ export const ReserveBikeModal = () => {
 
                         <DateRange
                           minDate={new Date()}
+                          //disable days if it falls between any reservations for the bike... 
+                          disabledDay={(date) =>
+                            some(values(selectedBike.reservationDates), (reserved) =>
+                              isWithinInterval(new Date(date), {
+                                start: new Date(reserved[0].seconds * 1000),
+                                end: new Date(reserved[1].seconds * 1000),
+                              })
+                            )
+                          }
                           moveRangeOnFirstSelection={false}
                           editableDateInputs={true}
                           onChange={(item: any) => {
